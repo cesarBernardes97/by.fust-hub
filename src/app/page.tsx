@@ -10,8 +10,11 @@ const ArrowIcon = () => (
   </svg>
 );
 
-const geotechUrl = process.env.NEXT_PUBLIC_GEOTECH_URL ?? "";
-const blocosUrl  = process.env.NEXT_PUBLIC_BLOCOS_URL  ?? "";
+const GEOTECH_PROD_URL = "https://geotech.byfust.com.br";
+const BLOCOS_PROD_URL  = ""; // still not live
+
+const geotechUrl = process.env.NEXT_PUBLIC_GEOTECH_URL || GEOTECH_PROD_URL;
+const blocosUrl  = process.env.NEXT_PUBLIC_BLOCOS_URL  || BLOCOS_PROD_URL;
 
 export default function Home() {
   return (

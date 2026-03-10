@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* LIGHT MODE - Premium User Specs */
+  --background: #F7F8FA;
+  --foreground: #0F172A;
+
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+
+  /* Accent: #F59E0B (Amber-500) per request */
+  --primary: #F59E0B;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+
+  --muted: #F8FAFC;
+  --muted-foreground: rgba(15, 23, 42, 0.65);
+
+  --accent: #F1F5F9;
+  --accent-foreground: #0F172A;
+
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  --border: rgba(15, 23, 42, 0.08);
+  --input: rgba(15, 23, 42, 0.08);
+  --ring: rgba(245, 158, 11, 0.25);
+}
+
+.dark {
+  /* DARK MODE - Original Zinc/Dark Palette */
+  --background: #0B0D10;
+  --foreground: rgba(255, 255, 255, 0.92);
+
+  --card: #12161C;
+  --card-foreground: rgba(255, 255, 255, 0.92);
+
+  --popover: #12161C;
+  --popover-foreground: rgba(255, 255, 255, 0.92);
+
+  --primary: #FF8A1F;
+  --primary-foreground: #000000;
+
+  --secondary: #171C23;
+  --secondary-foreground: rgba(255, 255, 255, 0.92);
+
+  --muted: #171C23;
+  --muted-foreground: rgba(255, 255, 255, 0.48);
+
+  --accent: rgba(255, 138, 31, 0.10);
+  --accent-foreground: #FF8A1F;
+
+  --destructive: #FF4D4D;
+  --destructive-foreground: #FFFFFF;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(255, 138, 31, 0.25);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body {
+    height: 100%;
+    @apply bg-background text-foreground antialiased;
+  }
+}

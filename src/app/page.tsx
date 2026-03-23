@@ -11,7 +11,7 @@ const ArrowIcon = () => (
 );
 
 const GEOTECH_PROD_URL = "https://geotech.byfust.com.br";
-const BLOCOS_PROD_URL  = ""; // still not live
+const BLOCOS_PROD_URL  = "https://blocos.byfust.com.br";
 
 const geotechUrl = process.env.NEXT_PUBLIC_GEOTECH_URL || GEOTECH_PROD_URL;
 const blocosUrl  = process.env.NEXT_PUBLIC_BLOCOS_URL  || BLOCOS_PROD_URL;
@@ -98,11 +98,11 @@ export default function Home() {
           {/* BY.BLOCOS */}
           <div className="group relative rounded-2xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 flex flex-col h-full min-h-[320px]">
             <div className="flex items-center justify-between mb-4">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-500 text-xs font-semibold border border-amber-500/20">
-                <svg className="w-3 h-3 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                Em construção
+              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-500 text-xs font-semibold border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse" />
+                Ativo
               </span>
-              <span className="text-xs text-muted-foreground/70 font-medium">Breve lançamento</span>
+              <span className="text-xs text-muted-foreground/70 font-medium">Versão 1.0</span>
             </div>
             <h2 className="mb-3 text-2xl font-bold text-card-foreground group-hover:text-primary transition-colors">
               BY.BLOCOS

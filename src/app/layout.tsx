@@ -1,12 +1,60 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Syne, Bebas_Neue, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-syne",
+});
+const bebasNeue = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bebas",
+});
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: "BY.FUST",
-  description: "Plataforma de módulos de engenharia",
+  metadataBase: new URL("https://byfust.com.br"),
+  title: "BY.FUST | Plataforma de Cálculo Estrutural",
+  description:
+    "Módulos de cálculo estrutural para engenheiros: blocos de coroamento, análise geotécnica, vigas e pilares. Memória de cálculo e relatórios PDF automáticos.",
+  keywords: [
+    "cálculo estrutural",
+    "engenharia estrutural",
+    "blocos de coroamento",
+    "geotécnica",
+    "dimensionamento",
+    "concreto armado",
+    "fundações",
+  ],
+  openGraph: {
+    title: "BY.FUST | Plataforma de Cálculo Estrutural",
+    description:
+      "Módulos especializados de cálculo estrutural para engenheiros. Memória de cálculo e relatórios PDF automáticos.",
+    url: "https://byfust.com.br",
+    siteName: "BY.FUST",
+    type: "website",
+    locale: "pt_BR",
+  },
+  twitter: {
+    card: "summary",
+    title: "BY.FUST | Plataforma de Cálculo Estrutural",
+    description:
+      "Módulos de cálculo estrutural para engenheiros.",
+  },
+  alternates: {
+    canonical: "https://byfust.com.br",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -15,9 +63,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="pt-BR" className="dark scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.className} antialiased bg-background text-foreground min-h-screen`}
+        className={`${inter.variable} ${syne.variable} ${bebasNeue.variable} ${ibmPlexMono.variable} font-syne antialiased bg-background text-foreground min-h-screen`}
       >
         {children}
       </body>

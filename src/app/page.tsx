@@ -280,7 +280,7 @@ export default function Home() {
                 rel="noreferrer"
                 className="btn-primary"
               >
-                Calcule grátis agora &rarr;
+                Acessar plataforma &rarr;
               </a>
               <a href="#modulos" className="btn-secondary">
                 Ver módulos

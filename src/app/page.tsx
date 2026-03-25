@@ -720,6 +720,13 @@ export default function Home() {
               BY.VIGAS
             </a>
             <a
+              href="#"
+              className="text-[13px] transition-colors"
+              style={{ color: "var(--text-dim)" }}
+            >
+              BY.PILAR
+            </a>
+            <a
               href="#suporte"
               className="text-[13px] transition-colors"
               style={{ color: "var(--text-dim)" }}

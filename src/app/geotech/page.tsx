@@ -9,7 +9,29 @@ const GEOTECH_URL =
 export const metadata: Metadata = {
   title: "BY.GEOTECH — Capacidade de Carga de Estacas | BY.FUST",
   description:
-    "Calcule capacidade de carga vertical e horizontal de estacas isoladas. Aoki-Velloso, Décourt-Quaresma, análise lateral P-Y e relatório PDF.",
+    "Calcule capacidade de carga vertical e horizontal de estacas isoladas. Métodos Aoki-Velloso, Décourt-Quaresma, análise lateral P-Y por diferenças finitas e relatório PDF automático.",
+  keywords: [
+    "capacidade de carga estaca",
+    "aoki velloso",
+    "décourt quaresma",
+    "análise lateral estaca",
+    "curva P-Y",
+    "geotecnia fundações",
+    "SPT estaca",
+    "cálculo geotécnico",
+  ],
+  openGraph: {
+    title: "BY.GEOTECH — Capacidade de Carga de Estacas",
+    description:
+      "Análise geotécnica de estacas com Aoki-Velloso, Décourt-Quaresma e análise lateral P-Y. Relatório PDF automático.",
+    url: "https://byfust.com.br/geotech",
+    siteName: "BY.FUST",
+    type: "website",
+    locale: "pt_BR",
+  },
+  alternates: {
+    canonical: "https://byfust.com.br/geotech",
+  },
 };
 
 /* ── Data ──────────────────────────────────────────────────────────── */

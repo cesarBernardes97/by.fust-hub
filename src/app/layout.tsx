@@ -64,6 +64,39 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "BY.FUST",
+              applicationCategory: "EngineeringApplication",
+              operatingSystem: "Web",
+              url: "https://byfust.com.br",
+              description:
+                "Plataforma modular de cálculo estrutural para engenheiros. Blocos de coroamento, geotecnia, vigas e pilares.",
+              offers: {
+                "@type": "AggregateOffer",
+                priceCurrency: "BRL",
+                lowPrice: "79",
+                highPrice: "690",
+                offerCount: "4",
+              },
+              author: {
+                "@type": "Organization",
+                name: "BY.FUST",
+                url: "https://byfust.com.br",
+              },
+              softwareHelp: {
+                "@type": "WebPage",
+                url: "https://byfust.com.br/#suporte",
+              },
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${syne.variable} ${bebasNeue.variable} ${ibmPlexMono.variable} font-syne antialiased bg-background text-foreground min-h-screen`}
       >

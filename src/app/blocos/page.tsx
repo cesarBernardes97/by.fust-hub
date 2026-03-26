@@ -6,7 +6,28 @@ const APP_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com
 export const metadata: Metadata = {
   title: "BY.BLOCOS — Dimensionamento de Blocos de Coroamento | BY.FUST",
   description:
-    "Dimensione blocos de coroamento sobre estacas com modelo de bielas e tirantes 3D. 13 tipos de bloco, NBR 6118:2023, relatório PDF e visualização 3D.",
+    "Dimensione blocos de coroamento sobre estacas com modelo de bielas e tirantes 3D. 13 tipologias de 1 a 9 estacas, múltiplos pilares, estacas inclinadas, NBR 6118:2023, relatório PDF e visualização 3D interativa.",
+  keywords: [
+    "bloco de coroamento",
+    "bloco sobre estacas",
+    "bielas e tirantes",
+    "STM 3D",
+    "dimensionamento bloco fundação",
+    "NBR 6118",
+    "cálculo estrutural blocos",
+  ],
+  openGraph: {
+    title: "BY.BLOCOS — Dimensionamento de Blocos de Coroamento",
+    description:
+      "13 tipologias de blocos sobre estacas com STM 3D, verificação de nós CCC/CCT/CTT e relatório PDF automático.",
+    url: "https://byfust.com.br/blocos",
+    siteName: "BY.FUST",
+    type: "website",
+    locale: "pt_BR",
+  },
+  alternates: {
+    canonical: "https://byfust.com.br/blocos",
+  },
 };
 
 const blockTypes = [

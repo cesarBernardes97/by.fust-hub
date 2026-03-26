@@ -1,4 +1,4 @@
-import { HeroVisual } from "@/components/hero-visual";
+import { HeroVisualLazy as HeroVisual } from "@/components/hero-visual-lazy";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 const BLOCOS_URL =

@@ -58,7 +58,7 @@ const diagrams: Diagram[] = [
   },
   {
     title: "Momento",
-    unit: "kN\u00b7m",
+    unit: "kN·m",
     fn: moment,
     color: "#22c55e",
     fillColor: "rgba(34,197,94,0.18)",

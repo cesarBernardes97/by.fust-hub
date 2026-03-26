@@ -7,9 +7,9 @@ const GEOTECH_URL =
   process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
 
 export const metadata: Metadata = {
-  title: "BY.GEOTECH \u2014 Capacidade de Carga de Estacas | BY.FUST",
+  title: "BY.GEOTECH — Capacidade de Carga de Estacas | BY.FUST",
   description:
-    "Calcule capacidade de carga vertical e horizontal de estacas isoladas. Aoki-Velloso, D\u00e9court-Quaresma, an\u00e1lise lateral P-Y e relat\u00f3rio PDF.",
+    "Calcule capacidade de carga vertical e horizontal de estacas isoladas. Aoki-Velloso, Décourt-Quaresma, análise lateral P-Y e relatório PDF.",
 };
 
 /* ── Data ──────────────────────────────────────────────────────────── */
@@ -20,24 +20,24 @@ const methodCards = [
     iconClass: "vertical",
     name: "Aoki-Velloso",
     type: "Carga vertical",
-    desc: "M\u00e9todo semiemp\u00edrico baseado em correla\u00e7\u00f5es com SPT e CPT. Amplamente utilizado na pr\u00e1tica brasileira desde 1975.",
+    desc: "Método semiempírico baseado em correlações com SPT e CPT. Amplamente utilizado na prática brasileira desde 1975.",
     features: [
-      "Correla\u00e7\u00e3o direta com N_SPT",
-      "Resist\u00eancia de ponta e lateral",
+      "Correlação direta com N_SPT",
+      "Resistência de ponta e lateral",
       "Coeficientes por tipo de solo",
-      "Fator de corre\u00e7\u00e3o F1 e F2",
+      "Fator de correção F1 e F2",
     ],
   },
   {
     icon: "Qr",
     iconClass: "vertical",
-    name: "D\u00e9court-Quaresma",
+    name: "Décourt-Quaresma",
     type: "Carga vertical",
-    desc: "M\u00e9todo semiemp\u00edrico que utiliza o valor m\u00e9dio do SPT ao longo do fuste e na ponta. Refer\u00eancia na engenharia de funda\u00e7\u00f5es brasileira.",
+    desc: "Método semiempírico que utiliza o valor médio do SPT ao longo do fuste e na ponta. Referência na engenharia de fundações brasileira.",
     features: [
-      "N_SPT m\u00e9dio do fuste",
-      "N_SPT da ponta (\u00b1 1m)",
-      "Coeficiente \u03b1 e \u03b2",
+      "N_SPT médio do fuste",
+      "N_SPT da ponta (± 1m)",
+      "Coeficiente α e β",
       "Parcelas de ponta e lateral",
     ],
   },
@@ -46,10 +46,10 @@ const methodCards = [
     iconClass: "lateral",
     name: "P-Y (Reese/Matlock)",
     type: "Carga lateral",
-    desc: "An\u00e1lise de estaca sob carga horizontal pelo m\u00e9todo das curvas P-Y. Resolu\u00e7\u00e3o por diferen\u00e7as finitas ao longo do fuste.",
+    desc: "Análise de estaca sob carga horizontal pelo método das curvas P-Y. Resolução por diferenças finitas ao longo do fuste.",
     features: [
       "Curvas P-Y por camada de solo",
-      "Diferen\u00e7as finitas (iterativo)",
+      "Diferenças finitas (iterativo)",
       "Matlock (argilas moles)",
       "Reese (areias e argilas rijas)",
     ],
@@ -57,31 +57,31 @@ const methodCards = [
 ];
 
 const estacas = [
-  { name: "Pr\u00e9-moldada", detail: "Concreto" },
-  { name: "H\u00e9lice Cont\u00ednua", detail: "CFA" },
+  { name: "Pré-moldada", detail: "Concreto" },
+  { name: "Hélice Contínua", detail: "CFA" },
   { name: "Estaca Raiz", detail: "Microestaca" },
   { name: "Franki", detail: "Base alargada" },
-  { name: "Met\u00e1lica", detail: "Perfil / Trilho" },
+  { name: "Metálica", detail: "Perfil / Trilho" },
   { name: "Escavada", detail: "Mecanizada" },
   { name: "Strauss", detail: "Moldada in loco" },
-  { name: "Barrete", detail: "Se\u00e7\u00e3o retangular" },
+  { name: "Barrete", detail: "Seção retangular" },
 ];
 
 const soilLayers = [
-  { depth: "0\u20132m", name: "Aterro", color: "#c9a96e", nspt: "3", nsptColor: "var(--text-muted-landing)" },
-  { depth: "2\u20135m", name: "Argila mole", color: "#8b7355", nspt: "5", nsptColor: "#f5820d" },
-  { depth: "5\u20139m", name: "Areia fina", color: "#d4a854", nspt: "12", nsptColor: "#f5820d" },
-  { depth: "9\u201313m", name: "Argila rija", color: "#7a6b52", nspt: "18", nsptColor: "#ff9b2e" },
-  { depth: "13\u201316m", name: "Areia m\u00e9dia", color: "#c4a64f", nspt: "25", nsptColor: "#ff9b2e" },
-  { depth: "16\u201318m", name: "Silte arenoso", color: "#a09070", nspt: "32", nsptColor: "#22c55e" },
-  { depth: "18\u201320m", name: "Areia grossa", color: "#9a8855", nspt: "40+", nsptColor: "#22c55e" },
+  { depth: "0–2m", name: "Aterro", color: "#c9a96e", nspt: "3", nsptColor: "var(--text-muted-landing)" },
+  { depth: "2–5m", name: "Argila mole", color: "#8b7355", nspt: "5", nsptColor: "#f5820d" },
+  { depth: "5–9m", name: "Areia fina", color: "#d4a854", nspt: "12", nsptColor: "#f5820d" },
+  { depth: "9–13m", name: "Argila rija", color: "#7a6b52", nspt: "18", nsptColor: "#ff9b2e" },
+  { depth: "13–16m", name: "Areia média", color: "#c4a64f", nspt: "25", nsptColor: "#ff9b2e" },
+  { depth: "16–18m", name: "Silte arenoso", color: "#a09070", nspt: "32", nsptColor: "#22c55e" },
+  { depth: "18–20m", name: "Areia grossa", color: "#9a8855", nspt: "40+", nsptColor: "#22c55e" },
 ];
 
 const bottomChecks = [
-  "Relat\u00f3rio PDF gerado automaticamente",
-  "C\u00e1lculo camada a camada detalhado",
-  "Curvas P-Y inclu\u00eddas",
-  "Pronto para impress\u00e3o e assinatura",
+  "Relatório PDF gerado automaticamente",
+  "Cálculo camada a camada detalhado",
+  "Curvas P-Y incluídas",
+  "Pronto para impressão e assinatura",
 ];
 
 /* ── Page ──────────────────────────────────────────────────────────── */
@@ -131,7 +131,7 @@ export default function GeotechPage() {
               letterSpacing: "0.02em",
             }}
           >
-            M\u00f3dulos
+            Módulos
           </Link>
           <a
             href={`${GEOTECH_URL}/geotech/estacas`}
@@ -208,7 +208,7 @@ export default function GeotechPage() {
               href="/#modulos"
               style={{ color: "var(--text-dim)", transition: "color 0.3s" }}
             >
-              M\u00f3dulos
+              Módulos
             </Link>
             <span style={{ color: "var(--text-muted-landing)" }}>&rsaquo;</span>
             <span>BY.GEOTECH</span>
@@ -281,10 +281,10 @@ export default function GeotechPage() {
               marginBottom: 36,
             }}
           >
-            Calcule a capacidade de carga de estacas isoladas pelos m\u00e9todos
-            consagrados da geotecnia brasileira. An\u00e1lise vertical por
-            Aoki-Velloso e D\u00e9court-Quaresma, lateral por P-Y com
-            diferen\u00e7as finitas. Tudo com relat\u00f3rio PDF.
+            Calcule a capacidade de carga de estacas isoladas pelos métodos
+            consagrados da geotecnia brasileira. Análise vertical por
+            Aoki-Velloso e Décourt-Quaresma, lateral por P-Y com
+            diferenças finitas. Tudo com relatório PDF.
           </p>
 
           {/* Actions */}
@@ -303,7 +303,7 @@ export default function GeotechPage() {
               rel="noreferrer"
               className="btn-secondary"
             >
-              Ver exemplo de relat\u00f3rio
+              Ver exemplo de relatório
             </a>
           </div>
         </div>
@@ -327,7 +327,7 @@ export default function GeotechPage() {
               marginBottom: 16,
             }}
           >
-            M\u00e9todos de c\u00e1lculo
+            Métodos de cálculo
           </div>
           <h2
             style={{
@@ -338,7 +338,7 @@ export default function GeotechPage() {
               marginBottom: 16,
             }}
           >
-            Tr\u00eas an\u00e1lises.{" "}
+            Três análises.{" "}
             <em
               style={{
                 fontFamily: "'Bebas Neue', var(--font-bebas), sans-serif",
@@ -349,7 +349,7 @@ export default function GeotechPage() {
                 color: "var(--accent-landing)",
               }}
             >
-              UM RELAT\u00d3RIO.
+              UM RELATÓRIO.
             </em>
           </h2>
           <p
@@ -361,9 +361,9 @@ export default function GeotechPage() {
               marginBottom: 56,
             }}
           >
-            Capacidade vertical e lateral calculadas em paralelo. O relat\u00f3rio
-            final traz a envolt\u00f3ria com os dois m\u00e9todos verticais e a
-            an\u00e1lise P-Y completa.
+            Capacidade vertical e lateral calculadas em paralelo. O relatório
+            final traz a envoltória com os dois métodos verticais e a
+            análise P-Y completa.
           </p>
         </div>
 
@@ -492,7 +492,7 @@ export default function GeotechPage() {
         </div>
       </section>
 
-      {/* ── Envolt\u00f3ria bar ─────────────────────────────────────── */}
+      {/* ── Envoltória bar ─────────────────────────────────────── */}
       <div
         style={{
           borderTop: "1px solid var(--border-landing)",
@@ -520,7 +520,7 @@ export default function GeotechPage() {
                 color: "var(--accent-landing)",
               }}
             >
-              ENVOLT\u00d3RIA
+              ENVOLTÓRIA
             </div>
             <div
               style={{
@@ -529,7 +529,7 @@ export default function GeotechPage() {
                 marginTop: 4,
               }}
             >
-              Aoki-Velloso &times; D\u00e9court-Quaresma
+              Aoki-Velloso &times; Décourt-Quaresma
             </div>
           </div>
           <div
@@ -541,9 +541,9 @@ export default function GeotechPage() {
               lineHeight: 1.6,
             }}
           >
-            O relat\u00f3rio apresenta a envolt\u00f3ria entre os dois m\u00e9todos,
+            O relatório apresenta a envoltória entre os dois métodos,
             permitindo ao engenheiro adotar o valor mais conservador ou fazer a
-            an\u00e1lise comparativa diretamente no PDF.
+            análise comparativa diretamente no PDF.
           </div>
         </div>
       </div>
@@ -603,9 +603,9 @@ export default function GeotechPage() {
               marginBottom: 56,
             }}
           >
-            Cada tipo de estaca tem seus coeficientes espec\u00edficos para os
-            m\u00e9todos de Aoki-Velloso e D\u00e9court-Quaresma. Todos
-            dispon\u00edveis com relat\u00f3rio PDF completo.
+            Cada tipo de estaca tem seus coeficientes específicos para os
+            métodos de Aoki-Velloso e Décourt-Quaresma. Todos
+            disponíveis com relatório PDF completo.
           </p>
         </div>
 
@@ -685,7 +685,7 @@ export default function GeotechPage() {
               marginBottom: 16,
             }}
           >
-            Perfil &rarr; C\u00e1lculo &rarr;{" "}
+            Perfil &rarr; Cálculo &rarr;{" "}
             <em
               style={{
                 fontFamily: "'Bebas Neue', var(--font-bebas), sans-serif",
@@ -696,7 +696,7 @@ export default function GeotechPage() {
                 color: "var(--accent-landing)",
               }}
             >
-              RELAT\u00d3RIO.
+              RELATÓRIO.
             </em>
           </h2>
           <p
@@ -708,8 +708,8 @@ export default function GeotechPage() {
             }}
           >
             Insira o perfil de sondagem camada a camada. O motor calcula por
-            Aoki-Velloso e D\u00e9court-Quaresma em paralelo e entrega a
-            envolt\u00f3ria.
+            Aoki-Velloso e Décourt-Quaresma em paralelo e entrega a
+            envoltória.
           </p>
         </div>
 
@@ -825,7 +825,7 @@ export default function GeotechPage() {
                 color: "var(--text-dim)",
               }}
             >
-              H\u00e9lice cont\u00ednua &middot; \u00d8 40cm &middot; L = 16m
+              Hélice contínua &middot; Ø 40cm &middot; L = 16m
             </div>
 
             {/* Aoki-Velloso result */}
@@ -838,9 +838,9 @@ export default function GeotechPage() {
               qTotal="699.9 kN"
             />
 
-            {/* D\u00e9court-Quaresma result */}
+            {/* Décourt-Quaresma result */}
             <ResultBlock
-              method="D\u00e9court-Quaresma"
+              method="Décourt-Quaresma"
               qPonta="389.1 kN"
               qPontaWidth="52%"
               qLateral="312.4 kN"
@@ -869,7 +869,7 @@ export default function GeotechPage() {
                     opacity: 0.7,
                   }}
                 >
-                  ENVOLT\u00d3RIA (valor adotado)
+                  ENVOLTÓRIA (valor adotado)
                 </div>
                 <div
                   style={{
@@ -878,7 +878,7 @@ export default function GeotechPage() {
                     marginTop: 2,
                   }}
                 >
-                  min(Aoki-Velloso, D\u00e9court-Quaresma)
+                  min(Aoki-Velloso, Décourt-Quaresma)
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
@@ -959,9 +959,9 @@ export default function GeotechPage() {
               position: "relative",
             }}
           >
-            Sua pr\u00f3xima estaca
+            Sua próxima estaca
             <br />
-            come\u00e7a{" "}
+            começa{" "}
             <em
               style={{
                 fontFamily: "'Bebas Neue', var(--font-bebas), sans-serif",
@@ -986,7 +986,7 @@ export default function GeotechPage() {
             }}
           >
             Insira o perfil de sondagem, escolha o tipo de estaca e gere o
-            relat\u00f3rio completo. Direto no navegador.
+            relatório completo. Direto no navegador.
           </p>
           <a
             href={`${GEOTECH_URL}/geotech/estacas`}
@@ -1029,7 +1029,7 @@ export default function GeotechPage() {
               marginTop: 4,
             }}
           >
-            C\u00e1lculo estrutural para engenheiros.
+            Cálculo estrutural para engenheiros.
           </div>
         </div>
         <div style={{ display: "flex", gap: 32 }}>
@@ -1041,7 +1041,7 @@ export default function GeotechPage() {
               transition: "color 0.3s",
             }}
           >
-            In\u00edcio
+            Início
           </Link>
           <Link
             href="/#modulos"
@@ -1051,7 +1051,7 @@ export default function GeotechPage() {
               transition: "color 0.3s",
             }}
           >
-            M\u00f3dulos
+            Módulos
           </Link>
           <a
             href="#"

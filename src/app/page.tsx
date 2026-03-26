@@ -148,6 +148,16 @@ export default function Home() {
             Como funciona
           </a>
           <a
+            href="#precos"
+            className="hidden sm:inline-block text-sm font-semibold transition-colors"
+            style={{
+              color: "var(--text-dim)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            Preços
+          </a>
+          <a
             href="#suporte"
             className="hidden sm:inline-block text-sm font-semibold transition-colors"
             style={{
@@ -594,6 +604,274 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── Pricing ─────────────────────────────────── */}
+        <section
+          id="precos"
+          className="py-20 md:py-[120px] px-6 md:px-12"
+          style={{
+            background: "var(--bg-elevated)",
+            borderTop: "1px solid var(--border-landing)",
+            borderBottom: "1px solid var(--border-landing)",
+          }}
+        >
+          <div className="reveal">
+            <div
+              className="font-mono text-xs font-semibold uppercase mb-4"
+              style={{
+                letterSpacing: "0.12em",
+                color: "var(--accent-landing)",
+              }}
+            >
+              Planos
+            </div>
+            <h2
+              className="font-syne"
+              style={{
+                fontSize: "clamp(32px, 4vw, 52px)",
+                fontWeight: 800,
+                lineHeight: 1.05,
+                letterSpacing: "-0.03em",
+                marginBottom: 16,
+                color: "var(--text)",
+              }}
+            >
+              Escolha o que{" "}
+              <em
+                className="font-bebas not-italic"
+                style={{
+                  fontWeight: 400,
+                  letterSpacing: "0.04em",
+                  fontSize: "1.15em",
+                  color: "var(--accent-landing)",
+                }}
+              >
+                faz sentido
+              </em>
+            </h2>
+            <p
+              className="mb-16"
+              style={{
+                fontSize: 17,
+                color: "var(--text-dim)",
+                lineHeight: 1.6,
+                maxWidth: 520,
+              }}
+            >
+              Assine módulos individuais ou o plano completo com 30% de desconto.
+              Cancele quando quiser.
+            </p>
+          </div>
+
+          <div className="reveal grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Individual BLOCOS */}
+            <div
+              className="rounded-xl p-8 flex flex-col"
+              style={{
+                border: "1px solid var(--border-landing)",
+                background: "var(--bg)",
+              }}
+            >
+              <div
+                className="font-mono text-[11px] font-semibold uppercase mb-6"
+                style={{ letterSpacing: "0.08em", color: "var(--text-dim)" }}
+              >
+                Módulo individual
+              </div>
+              <h3
+                className="font-syne text-xl font-bold mb-2"
+                style={{ color: "var(--text)" }}
+              >
+                BY.BLOCOS
+              </h3>
+              <p
+                className="text-sm mb-6"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Blocos de coroamento sobre estacas
+              </p>
+              <div className="mb-1">
+                <span
+                  className="font-mono text-4xl font-bold"
+                  style={{ color: "var(--text)" }}
+                >
+                  R$79
+                </span>
+                <span
+                  className="text-sm ml-1"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  /mês
+                </span>
+              </div>
+              <p
+                className="text-xs mb-8"
+                style={{ color: "var(--text-muted-landing)" }}
+              >
+                ou R$690/ano (27% off)
+              </p>
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {["13 tipologias de bloco", "STM 3D + verificação de nós", "Relatório PDF completo", "Estacas inclinadas"].map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-[13px]"
+                    style={{ color: "var(--text-dim)" }}
+                  >
+                    <span style={{ color: "var(--accent-landing)" }}>✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a href="/painel" className="btn-secondary w-full text-center">
+                Assinar
+              </a>
+            </div>
+
+            {/* Combo — DESTAQUE */}
+            <div
+              className="rounded-xl p-8 flex flex-col relative"
+              style={{
+                border: "2px solid var(--accent-landing)",
+                background: "var(--bg)",
+              }}
+            >
+              <div
+                className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[11px] font-bold uppercase"
+                style={{
+                  background: "var(--accent-landing)",
+                  color: "var(--bg)",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                30% off
+              </div>
+              <div
+                className="font-mono text-[11px] font-semibold uppercase mb-6"
+                style={{ letterSpacing: "0.08em", color: "var(--accent-landing)" }}
+              >
+                Todos os módulos
+              </div>
+              <h3
+                className="font-syne text-xl font-bold mb-2"
+                style={{ color: "var(--text)" }}
+              >
+                BY.FUST Completo
+              </h3>
+              <p
+                className="text-sm mb-6"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Blocos + Geotecnia + Vigas + Pilares
+              </p>
+              <div className="mb-1">
+                <span
+                  className="font-mono text-4xl font-bold"
+                  style={{ color: "var(--text)" }}
+                >
+                  R$110
+                </span>
+                <span
+                  className="text-sm ml-1"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  /mês
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mb-8">
+                <span
+                  className="text-xs line-through"
+                  style={{ color: "var(--text-muted-landing)" }}
+                >
+                  R$158/mês
+                </span>
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--text-muted-landing)" }}
+                >
+                  ou R$970/ano
+                </span>
+              </div>
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {["Tudo do BY.BLOCOS", "Tudo do BY.GEOTECH", "BY.VIGAS ao lançar", "BY.PILAR ao lançar", "Prioridade em novos módulos"].map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-[13px]"
+                    style={{ color: "var(--text-dim)" }}
+                  >
+                    <span style={{ color: "var(--accent-landing)" }}>✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a href="/painel" className="btn-primary w-full text-center">
+                Assinar completo
+              </a>
+            </div>
+
+            {/* Individual GEOTECH */}
+            <div
+              className="rounded-xl p-8 flex flex-col"
+              style={{
+                border: "1px solid var(--border-landing)",
+                background: "var(--bg)",
+              }}
+            >
+              <div
+                className="font-mono text-[11px] font-semibold uppercase mb-6"
+                style={{ letterSpacing: "0.08em", color: "var(--text-dim)" }}
+              >
+                Módulo individual
+              </div>
+              <h3
+                className="font-syne text-xl font-bold mb-2"
+                style={{ color: "var(--text)" }}
+              >
+                BY.GEOTECH
+              </h3>
+              <p
+                className="text-sm mb-6"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Capacidade de carga de estacas
+              </p>
+              <div className="mb-1">
+                <span
+                  className="font-mono text-4xl font-bold"
+                  style={{ color: "var(--text)" }}
+                >
+                  R$79
+                </span>
+                <span
+                  className="text-sm ml-1"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  /mês
+                </span>
+              </div>
+              <p
+                className="text-xs mb-8"
+                style={{ color: "var(--text-muted-landing)" }}
+              >
+                ou R$690/ano (27% off)
+              </p>
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {["Aoki-Velloso e Décourt-Quaresma", "Análise lateral P-Y", "12 tipos de estaca", "Relatório PDF completo"].map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-[13px]"
+                    style={{ color: "var(--text-dim)" }}
+                  >
+                    <span style={{ color: "var(--accent-landing)" }}>✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a href="/painel" className="btn-secondary w-full text-center">
+                Assinar
+              </a>
+            </div>
           </div>
         </section>
 

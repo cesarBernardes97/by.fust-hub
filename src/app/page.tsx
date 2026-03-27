@@ -411,84 +411,88 @@ export default function Home() {
               return (
                 <div
                   key={mod.name}
-                  className={`module-card p-8 md:p-12 cursor-pointer ${!isActive ? "coming-soon" : ""}`}
+                  className={`module-card p-8 md:p-10 ${!isActive ? "coming-soon" : ""}`}
                   style={{ background: "var(--bg)" }}
                 >
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-5 relative">
-                    <div className="font-mono text-[22px] font-bold" style={{ letterSpacing: "-0.02em", color: "var(--text)" }}>
-                      {mod.name}{" "}
-                      <small
-                        className="text-[11px] font-semibold uppercase ml-3 align-middle"
-                        style={{
-                          letterSpacing: "0.08em",
-                          color: "var(--text-dim)",
-                        }}
-                      >
-                        {mod.tag}
-                      </small>
-                    </div>
+                  {/* Top row: name + status */}
+                  <div className="flex items-start justify-between mb-1 relative">
+                    <h3
+                      className="text-[28px] md:text-[32px] font-black tracking-tight"
+                      style={{ color: isActive ? "var(--text)" : "var(--text-dim)", lineHeight: 1.1 }}
+                    >
+                      {mod.name}
+                    </h3>
                     {isActive ? (
                       <span
-                        className="text-[11px] font-semibold uppercase flex items-center gap-1.5"
-                        style={{
-                          letterSpacing: "0.06em",
-                          color: "var(--green-landing)",
-                        }}
+                        className="text-[10px] font-bold uppercase flex items-center gap-1.5 mt-1.5 shrink-0"
+                        style={{ letterSpacing: "0.08em", color: "var(--green-landing)" }}
                       >
                         <span
                           className="w-1.5 h-1.5 rounded-full"
-                          style={{
-                            background: "var(--green-landing)",
-                            boxShadow: "0 0 8px rgba(34, 197, 94, 0.4)",
-                          }}
+                          style={{ background: "var(--green-landing)", boxShadow: "0 0 8px rgba(34,197,94,0.4)" }}
                         />
                         Ativo
                       </span>
                     ) : (
                       <span
-                        className="text-[11px] font-semibold uppercase"
-                        style={{ color: "var(--text-muted-landing)" }}
+                        className="text-[10px] font-semibold uppercase mt-1.5 shrink-0"
+                        style={{ color: "var(--text-muted-landing)", letterSpacing: "0.08em" }}
                       >
                         Em breve
                       </span>
                     )}
                   </div>
 
-                  {/* Description */}
-                  <p
-                    className="text-[15px] leading-relaxed mb-6 relative"
-                    style={{ color: "var(--text-dim)" }}
-                  >
+                  {/* Subtitle */}
+                  <p className="text-[13px] mb-6 relative" style={{ color: "var(--text-dim)" }}>
                     {mod.description}
                   </p>
 
-                  {/* Feature tags */}
-                  <div className="flex flex-wrap gap-2 relative">
-                    {mod.features.map((feat) => (
-                      <span key={feat} className="feature-tag">
-                        {feat}
-                      </span>
+                  {/* Divider */}
+                  <div className="mb-5" style={{ borderTop: "1px solid var(--border-landing)" }} />
+
+                  {/* Features as check list */}
+                  <ul className="space-y-2.5 mb-6 relative">
+                    {mod.features.slice(0, 4).map((feat) => (
+                      <li key={feat} className="flex items-start gap-2.5">
+                        <svg
+                          className="w-4 h-4 mt-0.5 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke={isActive ? "var(--accent-landing)" : "var(--text-muted-landing)"}
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-[13px]" style={{ color: isActive ? "var(--text-dim)" : "var(--text-muted-landing)" }}>
+                          {feat}
+                        </span>
+                      </li>
                     ))}
-                  </div>
+                    {mod.features.length > 4 && (
+                      <li className="text-[12px] ml-6.5" style={{ color: "var(--text-muted-landing)" }}>
+                        +{mod.features.length - 4} mais
+                      </li>
+                    )}
+                  </ul>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-4 mt-6 relative">
+                  <div className="flex items-center gap-4 relative">
                     {isActive && mod.url ? (
                       <>
                         <a
                           href={mod.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="font-mono text-[13px] font-semibold inline-flex items-center gap-1.5 transition-colors"
-                          style={{ color: "var(--accent-landing)" }}
+                          className="btn-primary text-[13px]"
+                          style={{ padding: "8px 20px" }}
                         >
                           Acessar módulo &rarr;
                         </a>
                         {mod.page && (
                           <a
                             href={mod.page}
-                            className="font-mono text-[13px] font-semibold transition-colors"
+                            className="text-[13px] font-semibold transition-colors hover:underline"
                             style={{ color: "var(--text-dim)" }}
                           >
                             Saiba mais
@@ -497,11 +501,8 @@ export default function Home() {
                       </>
                     ) : (
                       <span
-                        className="font-mono text-[13px] italic"
-                        style={{
-                          color: "var(--text-muted-landing)",
-                          fontWeight: 400,
-                        }}
+                        className="text-[13px] italic"
+                        style={{ color: "var(--text-muted-landing)", fontWeight: 400 }}
                       >
                         Disponível em breve
                       </span>

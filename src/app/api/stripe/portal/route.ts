@@ -20,9 +20,11 @@ export async function POST() {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Find stripe_customer_id from module_subscriptions
+    // Find stripe_customer_id: try module_subscriptions first, fallback to legacy subscriptions
     const sb = getAdminSupabase();
-    const { data: sub } = await sb
+    let customerId: string | null = null;
+
+    const { data: modSub } = await sb
       .from("module_subscriptions")
       .select("stripe_customer_id")
       .eq("user_id", user.id)
@@ -30,7 +32,20 @@ export async function POST() {
       .limit(1)
       .single();
 
-    if (!sub?.stripe_customer_id) {
+    if (modSub?.stripe_customer_id) {
+      customerId = modSub.stripe_customer_id;
+    } else {
+      // Fallback to legacy subscriptions table
+      const { data: legacySub } = await sb
+        .from("subscriptions")
+        .select("stripe_customer_id")
+        .eq("user_id", user.id)
+        .not("stripe_customer_id", "is", null)
+        .single();
+      customerId = legacySub?.stripe_customer_id ?? null;
+    }
+
+    if (!customerId) {
       return NextResponse.json(
         { error: "No active subscription found" },
         { status: 404 },
@@ -41,7 +56,7 @@ export async function POST() {
     const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://byfust.com.br/painel";
 
     const session = await stripe.billingPortal.sessions.create({
-      customer: sub.stripe_customer_id,
+      customer: customerId,
       return_url: returnUrl,
     });
 

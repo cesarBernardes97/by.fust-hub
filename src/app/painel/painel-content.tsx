@@ -58,10 +58,12 @@ export function PainelContent({ user, modules }: Props) {
       const res = await fetch("/api/stripe/portal", { method: "POST" });
       const data = await res.json();
       if (data.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Não foi possível abrir o portal. Tente novamente.");
       }
     } catch {
-      // silently fail
+      alert("Erro ao conectar com o Stripe. Tente novamente.");
     }
   }
 

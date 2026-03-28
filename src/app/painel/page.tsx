@@ -8,10 +8,17 @@ export default async function PainelPage() {
 
   if (!user) redirect("/login");
 
-  const { data: modules } = await supabase
-    .from("module_subscriptions")
-    .select("module, plan_type, status, current_period_end")
-    .eq("user_id", user.id);
+  const [{ data: modules }, { data: redemption }] = await Promise.all([
+    supabase
+      .from("module_subscriptions")
+      .select("module, plan_type, status, current_period_end")
+      .eq("user_id", user.id),
+    supabase
+      .from("coupon_redemptions")
+      .select("expires_at")
+      .eq("user_id", user.id)
+      .single(),
+  ]);
 
   const moduleMap: Record<string, { plan_type: string; status: string; current_period_end: string | null }> = {};
   for (const mod of modules || []) {
@@ -26,6 +33,7 @@ export default async function PainelPage() {
     <PainelContent
       user={{ email: user.email!, name: user.user_metadata?.full_name || null }}
       modules={moduleMap}
+      redemption={redemption ?? null}
     />
   );
 }

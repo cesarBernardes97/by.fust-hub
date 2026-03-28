@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { logout } from "@/app/auth/actions";
 import Link from "next/link";
 
@@ -16,6 +17,7 @@ interface ModuleInfo {
 interface Props {
   user: { email: string; name: string | null };
   modules: Record<string, ModuleInfo>;
+  redemption: { expires_at: string } | null;
 }
 
 const MODULE_CONFIG = [
@@ -45,8 +47,41 @@ const MODULE_CONFIG = [
   },
 ];
 
-export function PainelContent({ user, modules }: Props) {
+export function PainelContent({ user, modules, redemption }: Props) {
   const router = useRouter();
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponMsg, setCouponMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  const trialDaysLeft = redemption
+    ? Math.max(0, Math.ceil((new Date(redemption.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+  const trialActive = trialDaysLeft !== null && trialDaysLeft > 0;
+
+  async function handleRedeemCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponMsg(null);
+    try {
+      const res = await fetch("/api/coupon/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponCode.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCouponMsg({ type: "ok", text: `Acesso liberado por ${data.trialDays} dias!` });
+        setCouponCode("");
+        router.refresh();
+      } else {
+        setCouponMsg({ type: "err", text: data.error || "Erro ao resgatar." });
+      }
+    } catch {
+      setCouponMsg({ type: "err", text: "Erro de conexão." });
+    } finally {
+      setCouponLoading(false);
+    }
+  }
 
   async function handleLogout() {
     await logout();
@@ -115,6 +150,66 @@ export function PainelContent({ user, modules }: Props) {
             >
               Abrir portal →
             </button>
+          </div>
+        )}
+
+        {/* Coupon / Trial block */}
+        {trialActive ? (
+          <div className="mb-8 p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                Acesso de teste ativo — {trialDaysLeft} {trialDaysLeft === 1 ? "dia restante" : "dias restantes"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Expira em {new Date(redemption!.expires_at).toLocaleDateString("pt-BR")}. Assine para não perder o acesso.
+              </p>
+            </div>
+            <Link
+              href="/#planos"
+              className="px-4 py-2 text-[13px] font-bold rounded-lg bg-primary text-black transition-all hover:brightness-110 active:scale-[0.97] whitespace-nowrap"
+            >
+              Assinar agora →
+            </Link>
+          </div>
+        ) : redemption && !trialActive ? (
+          <div className="mb-8 p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Período de teste encerrado</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Assine para continuar usando BY.BLOCOS e BY.GEOTECH.</p>
+            </div>
+            <Link
+              href="/#planos"
+              className="px-4 py-2 text-[13px] font-bold rounded-lg bg-primary text-black transition-all hover:brightness-110 active:scale-[0.97] whitespace-nowrap"
+            >
+              Ver planos →
+            </Link>
+          </div>
+        ) : (
+          <div className="mb-8 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+            <p className="text-sm font-semibold text-foreground mb-1">Tem um código de acesso?</p>
+            <p className="text-xs text-muted-foreground mb-3">Insira seu código para liberar o acesso completo por 15 dias.</p>
+            <div className="flex gap-2">
+              <input
+                value={couponCode}
+                onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                onKeyDown={e => e.key === "Enter" && handleRedeemCoupon()}
+                placeholder="EX: BETA2026"
+                disabled={couponLoading}
+                className="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-sm text-foreground font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground/40 placeholder:tracking-normal placeholder:font-sans disabled:opacity-50"
+              />
+              <button
+                onClick={handleRedeemCoupon}
+                disabled={couponLoading || !couponCode.trim()}
+                className="px-4 py-2 text-[13px] font-bold rounded-lg bg-primary text-black transition-all hover:brightness-110 active:scale-[0.97] disabled:opacity-40"
+              >
+                {couponLoading ? "..." : "Resgatar"}
+              </button>
+            </div>
+            {couponMsg && (
+              <p className={`text-xs mt-2 ${couponMsg.type === "ok" ? "text-emerald-400" : "text-red-400"}`}>
+                {couponMsg.text}
+              </p>
+            )}
           </div>
         )}
 

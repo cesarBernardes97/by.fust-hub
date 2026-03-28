@@ -352,7 +352,7 @@ export function GeotechVisual() {
 
       ctx.font = '600 12px "Syne", sans-serif';
       pyLayers.forEach((layer, i) => {
-        const lx = pad.left + gw - 130;
+        const lx = pad.left + 8;
         const ly = pad.top + 20 + i * 24;
         ctx.beginPath();
         ctx.arc(lx, ly - 3, 4, 0, Math.PI * 2);

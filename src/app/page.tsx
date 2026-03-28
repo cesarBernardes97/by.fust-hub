@@ -661,12 +661,74 @@ export default function Home() {
                 maxWidth: 520,
               }}
             >
-              Assine módulos individuais ou o plano completo com 30% de desconto.
+              Comece grátis ou assine módulos individuais. Plano completo com 30% de desconto.
               Cancele quando quiser.
             </p>
           </div>
 
-          <div className="reveal grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {/* Gratuito */}
+            <div
+              className="rounded-xl p-8 flex flex-col"
+              style={{
+                border: "1px solid var(--border-landing)",
+                background: "var(--bg)",
+              }}
+            >
+              <div
+                className="font-mono text-[11px] font-semibold uppercase mb-6"
+                style={{ letterSpacing: "0.08em", color: "var(--text-dim)" }}
+              >
+                Para começar
+              </div>
+              <h3
+                className="font-syne text-xl font-bold mb-2"
+                style={{ color: "var(--text)" }}
+              >
+                Gratuito
+              </h3>
+              <p
+                className="text-sm mb-6"
+                style={{ color: "var(--text-dim)" }}
+              >
+                BY.BLOCOS com limite de uso
+              </p>
+              <div className="mb-1">
+                <span
+                  className="font-mono text-4xl font-bold"
+                  style={{ color: "var(--text)" }}
+                >
+                  R$0
+                </span>
+                <span
+                  className="text-sm ml-1"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  /mês
+                </span>
+              </div>
+              <p className="text-xs mb-8" style={{ color: "var(--text-muted-landing)" }}>
+                para sempre
+              </p>
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {["2 blocos por mês", "STM 3D completo", "Sem relatório PDF"].map((f, i) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-[13px]"
+                    style={{ color: "var(--text-dim)" }}
+                  >
+                    <span style={{ color: i === 2 ? "var(--text-muted-landing)" : "var(--accent-landing)" }}>
+                      {i === 2 ? "—" : "✓"}
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a href="/cadastro" className="btn-secondary w-full text-center">
+                Começar grátis
+              </a>
+            </div>
+
             {/* Individual BLOCOS */}
             <div
               className="rounded-xl p-8 flex flex-col"
@@ -764,7 +826,7 @@ export default function Home() {
                 className="text-sm mb-6"
                 style={{ color: "var(--text-dim)" }}
               >
-                Blocos + Geotecnia + Vigas + Pilares
+                Blocos + Geotecnia
               </p>
               <div className="mb-1">
                 <span
@@ -795,7 +857,7 @@ export default function Home() {
                 </span>
               </div>
               <ul className="space-y-2.5 mb-8 flex-1">
-                {["Tudo do BY.BLOCOS", "Tudo do BY.GEOTECH", "BY.VIGAS ao lançar", "BY.PILAR ao lançar", "Prioridade em novos módulos"].map((f) => (
+                {["Tudo do BY.BLOCOS", "Tudo do BY.GEOTECH"].map((f) => (
                   <li
                     key={f}
                     className="flex items-center gap-2 text-[13px]"

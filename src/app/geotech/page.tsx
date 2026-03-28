@@ -613,7 +613,7 @@ export default function GeotechPage() {
                 color: "var(--accent-landing)",
               }}
             >
-              TODOS COM TRILHO TR.
+              COEFICIENTES ESPECÍFICOS.
             </em>
           </h2>
           <p

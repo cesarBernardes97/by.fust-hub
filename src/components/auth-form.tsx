@@ -63,14 +63,24 @@ export function AuthForm({ type }: AuthFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {!isLogin && (
-          <div>
-            <label htmlFor="fullName" className="text-xs text-muted-foreground block mb-1">Nome completo</label>
-            <input
-              id="fullName" name="fullName" type="text" required disabled={loading}
-              className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground/50"
-              placeholder="Seu nome"
-            />
-          </div>
+          <>
+            <div>
+              <label htmlFor="fullName" className="text-xs text-muted-foreground block mb-1">Nome completo</label>
+              <input
+                id="fullName" name="fullName" type="text" required disabled={loading}
+                className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+                placeholder="Seu nome"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="text-xs text-muted-foreground block mb-1">Telefone / WhatsApp</label>
+              <input
+                id="phone" name="phone" type="tel" required disabled={loading}
+                className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground/50"
+                placeholder="(11) 99999-9999"
+              />
+            </div>
+          </>
         )}
 
         <div>

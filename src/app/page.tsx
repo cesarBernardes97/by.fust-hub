@@ -711,7 +711,7 @@ export default function Home() {
                 para sempre
               </p>
               <ul className="space-y-2.5 mb-8 flex-1">
-                {["2 blocos por mês", "STM 3D completo", "Sem relatório PDF"].map((f, i) => (
+                {["3 blocos no total", "STM 3D completo", "Sem resultados em Excel"].map((f, i) => (
                   <li
                     key={f}
                     className="flex items-center gap-2 text-[13px]"

@@ -250,7 +250,7 @@ export default function Home() {
                 color: "var(--text)",
               }}
             >
-              Estrutural e geotecnia.
+              Do solo
               <br />
               <em
                 className="font-bebas not-italic"
@@ -261,7 +261,7 @@ export default function Home() {
                   fontSize: "1.1em",
                 }}
               >
-                Sem planilha.
+                À ESTRUTURA.
               </em>
             </h1>
 

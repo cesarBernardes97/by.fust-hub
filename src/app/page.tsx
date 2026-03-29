@@ -235,7 +235,7 @@ export default function Home() {
                   animation: "pulse-dot 2s ease infinite",
                 }}
               />
-              Engenharia Estrutural
+              Estrutural · Geotecnia
             </div>
 
             <h1
@@ -250,7 +250,7 @@ export default function Home() {
                 color: "var(--text)",
               }}
             >
-              Cálculo estrutural.
+              Estrutural e geotecnia.
               <br />
               <em
                 className="font-bebas not-italic"

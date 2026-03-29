@@ -21,9 +21,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://byfust.com.br"),
-  title: "BY.FUST | Plataforma de Cálculo Estrutural",
+  title: "BY.FUST | Cálculo Estrutural e Geotecnia",
   description:
-    "Módulos de cálculo estrutural para engenheiros: blocos de coroamento, análise geotécnica, vigas e pilares. Memória de cálculo e relatórios PDF automáticos.",
+    "Plataforma de cálculo estrutural e geotécnico para engenheiros: blocos de coroamento, capacidade de carga de estacas, vigas e pilares. Relatórios PDF automáticos.",
   keywords: [
     "cálculo estrutural",
     "engenharia estrutural",
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     "fundações",
   ],
   openGraph: {
-    title: "BY.FUST | Plataforma de Cálculo Estrutural",
+    title: "BY.FUST | Cálculo Estrutural e Geotecnia",
     description:
-      "Módulos especializados de cálculo estrutural para engenheiros. Memória de cálculo e relatórios PDF automáticos.",
+      "Plataforma de cálculo estrutural e geotécnico para engenheiros. Blocos de coroamento, estacas, vigas e pilares.",
     url: "https://byfust.com.br",
     siteName: "BY.FUST",
     type: "website",
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "BY.FUST | Plataforma de Cálculo Estrutural",
+    title: "BY.FUST | Cálculo Estrutural e Geotecnia",
     description:
-      "Módulos de cálculo estrutural para engenheiros.",
+      "Plataforma de cálculo estrutural e geotécnico para engenheiros.",
   },
   alternates: {
     canonical: "https://byfust.com.br",

@@ -7,1028 +7,453 @@ const BLOCOS_URL =
 const GEOTECH_URL =
   process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
 
-// ---------------------------------------------------------------------------
-// Camera keyframes
-// ---------------------------------------------------------------------------
-const CAM_KF = [
-  { t: 0.0,  pos: [28, 14, 28] as [number, number, number], look: [0,  2, 0] as [number, number, number] },
-  { t: 0.15, pos: [24, 11, 24] as [number, number, number], look: [0,  2, 0] as [number, number, number] },
-  { t: 0.22, pos: [16,  6, 16] as [number, number, number], look: [0,  2, 0] as [number, number, number] },
-  { t: 0.30, pos: [14,  4, 14] as [number, number, number], look: [0,  0, 0] as [number, number, number] },
-  { t: 0.42, pos: [12,  2, 12] as [number, number, number], look: [0, -1, 0] as [number, number, number] },
-  { t: 0.50, pos: [12,  0, 12] as [number, number, number], look: [0, -3, 0] as [number, number, number] },
-  { t: 0.58, pos: [11, -1, 11] as [number, number, number], look: [0, -4, 0] as [number, number, number] },
-  { t: 0.72, pos: [10, -2, 10] as [number, number, number], look: [0, -5, 0] as [number, number, number] },
-  { t: 0.78, pos: [13, -2, 13] as [number, number, number], look: [0, -6, 0] as [number, number, number] },
-  { t: 0.88, pos: [15, -2, 15] as [number, number, number], look: [0, -6, 0] as [number, number, number] },
-  { t: 0.94, pos: [16,  4, 16] as [number, number, number], look: [0,  0, 0] as [number, number, number] },
-  { t: 1.0,  pos: [28, 14, 28] as [number, number, number], look: [0,  2, 0] as [number, number, number] },
-];
-
-function easeInOut(t: number) {
-  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-}
-
-function lerpCam(scrollP: number) {
-  let i = 0;
-  for (let k = 0; k < CAM_KF.length - 1; k++) {
-    if (scrollP >= CAM_KF[k].t && scrollP <= CAM_KF[k + 1].t) {
-      i = k;
-      break;
-    }
-  }
-  const a = CAM_KF[i];
-  const b = CAM_KF[i + 1];
-  const span = b.t - a.t;
-  const raw = span === 0 ? 0 : (scrollP - a.t) / span;
-  const t = easeInOut(Math.max(0, Math.min(1, raw)));
-  const pos: [number, number, number] = [
-    a.pos[0] + (b.pos[0] - a.pos[0]) * t,
-    a.pos[1] + (b.pos[1] - a.pos[1]) * t,
-    a.pos[2] + (b.pos[2] - a.pos[2]) * t,
-  ];
-  const look: [number, number, number] = [
-    a.look[0] + (b.look[0] - a.look[0]) * t,
-    a.look[1] + (b.look[1] - a.look[1]) * t,
-    a.look[2] + (b.look[2] - a.look[2]) * t,
-  ];
-  return { pos, look };
-}
-
-// ---------------------------------------------------------------------------
-// Slide ranges
-// ---------------------------------------------------------------------------
-const SLIDES = [
-  { id: "s1", from: 0.0,  to: 0.14 },
-  { id: "s2", from: 0.16, to: 0.28 },
-  { id: "s3", from: 0.30, to: 0.48 },
-  { id: "s4", from: 0.52, to: 0.74 },
-  { id: "s5", from: 0.76, to: 0.90 },
-  { id: "s6", from: 0.93, to: 1.0  },
-];
-
-function getActiveSlide(p: number) {
-  for (const s of SLIDES) {
-    if (p >= s.from && p <= s.to) return s.id;
-  }
-  return "";
-}
-
-// ---------------------------------------------------------------------------
-// Slide opacity helper (lerp in/out over 0.015 window)
-// ---------------------------------------------------------------------------
-function slideOpacity(id: string, p: number) {
-  const s = SLIDES.find((x) => x.id === id);
-  if (!s) return 0;
-  const fade = 0.015;
-  if (p < s.from - fade || p > s.to + fade) return 0;
-  if (p < s.from) return (p - (s.from - fade)) / fade;
-  if (p > s.to)   return 1 - (p - s.to) / fade;
-  return 1;
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 export function BridgeHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const scrollRef = useRef(0);
-  // DOM refs for each slide — updated directly in rAF (no re-renders)
   const slideRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const progressRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
+  const scrollSpaceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // -----------------------------------------------------------------------
-    // Renderer
-    // -----------------------------------------------------------------------
+    // ═══ RENDERER ═══
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x0B0D10);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setClearColor(0x0b0d10, 1);
 
-    // -----------------------------------------------------------------------
-    // Scene
-    // -----------------------------------------------------------------------
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0b0d10, 50, 140);
-
-    // Camera
-    const camera = new THREE.PerspectiveCamera(
-      30,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      200
-    );
-    camera.position.set(28, 14, 28);
-    camera.lookAt(0, 2, 0);
+    scene.fog = new THREE.Fog(0x0B0D10, 50, 140);
+    const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 200);
 
     // Lights
-    const ambient = new THREE.AmbientLight(0xffffff, 0.35);
-    scene.add(ambient);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+    dir.position.set(8, 15, 10);
+    dir.castShadow = true;
+    dir.shadow.mapSize.set(1024, 1024);
+    dir.shadow.camera.near = 0.5; dir.shadow.camera.far = 80;
+    dir.shadow.camera.left = -30; dir.shadow.camera.right = 30;
+    dir.shadow.camera.top = 30; dir.shadow.camera.bottom = -30;
+    scene.add(dir);
+    const rim = new THREE.DirectionalLight(0xFF8A1F, 0.15);
+    rim.position.set(-6, 4, -8); scene.add(rim);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    dirLight.position.set(8, 15, 10);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.set(1024, 1024);
-    dirLight.shadow.camera.near   =  0.5;
-    dirLight.shadow.camera.far    = 80;
-    dirLight.shadow.camera.left   = -30;
-    dirLight.shadow.camera.right  =  30;
-    dirLight.shadow.camera.top    =  30;
-    dirLight.shadow.camera.bottom = -30;
-    scene.add(dirLight);
-
-    const rimLight = new THREE.DirectionalLight(0xff8a1f, 0.15);
-    rimLight.position.set(-6, 4, -8);
-    scene.add(rimLight);
-
-    // -----------------------------------------------------------------------
     // Materials
-    // -----------------------------------------------------------------------
     const matW = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, roughness: 0.85 });
     const matG = new THREE.MeshStandardMaterial({ color: 0xb0b0b0, roughness: 0.9 });
-    const matO = new THREE.MeshStandardMaterial({
-      color: 0xff8a1f, roughness: 0.5,
-      emissive: new THREE.Color(0xff8a1f),
-      emissiveIntensity: 0.12,
-    });
+    const matO = new THREE.MeshStandardMaterial({ color: 0xFF8A1F, roughness: 0.5, emissive: 0xFF8A1F, emissiveIntensity: 0.12 });
     const matP = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.9 });
     const matGnd = new THREE.MeshStandardMaterial({ color: 0x0e1014, roughness: 1 });
 
-    // Highlight materials (mutable)
-    const matPilarHi = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, roughness: 0.7, emissive: new THREE.Color(0xffffff), emissiveIntensity: 0 });
-    const matPileHi  = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.8, emissive: new THREE.Color(0xffffff), emissiveIntensity: 0 });
+    // For highlighting
+    const matPilarHi = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, roughness: 0.7, emissive: 0xffffff, emissiveIntensity: 0 });
+    const matPileHi = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.8, emissive: 0xffffff, emissiveIntensity: 0 });
 
-    // -----------------------------------------------------------------------
-    // Scene root group
-    // -----------------------------------------------------------------------
     const root = new THREE.Group();
     root.position.x = 3;
     root.rotation.y = -0.35;
     scene.add(root);
 
-    // -----------------------------------------------------------------------
     // Ground
-    // -----------------------------------------------------------------------
-    const gndMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(200, 200),
-      matGnd
-    );
-    gndMesh.rotation.x = -Math.PI / 2;
-    gndMesh.position.y = -12;
-    gndMesh.receiveShadow = true;
-    root.add(gndMesh);
+    const gnd = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), matGnd);
+    gnd.rotation.x = -Math.PI / 2; gnd.position.y = -12; gnd.receiveShadow = true;
+    root.add(gnd);
 
-    // -----------------------------------------------------------------------
-    // DECK
-    // -----------------------------------------------------------------------
+    // ═══ DECK ═══
+    const dL = 80, sW = 7.0, sT = 0.15, wH = 1.4, wT = 0.12, bT = 0.12, cW = 1.5, gW = 0.8, dY = 8;
     const dGrp = new THREE.Group();
     dGrp.position.x = -25;
-    root.add(dGrp);
 
-    const dL  = 80;
-    const sW  = 7.0;
-    const sT  = 0.15;
-    const wH  = 1.4;
-    const wT  = 0.12;
-    const bT  = 0.12;
-    const cW  = 1.5;
-    const gW  = 0.8;
-    const dY  = 8;
+    function addBox(parent: THREE.Group, geo: THREE.BoxGeometry, mat: THREE.Material, x: number, y: number, z: number, shadow: boolean) {
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, y, z);
+      m.castShadow = !!shadow; m.receiveShadow = !!shadow;
+      parent.add(m);
+      return m;
+    }
 
     // Top slab
-    const slabMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(dL, sT, sW),
-      matW
-    );
-    slabMesh.position.set(0, dY - sT / 2, 0);
-    slabMesh.castShadow = true;
-    dGrp.add(slabMesh);
+    addBox(dGrp, new THREE.BoxGeometry(dL, sT, sW), matW, 0, dY - sT/2, 0, true);
 
-    // Box girders — two, at gz = -(gW/2 + cW/2) and +(gW/2 + cW/2)
-    const gzVals = [-(gW / 2 + cW / 2), +(gW / 2 + cW / 2)];
-    for (const gz of gzVals) {
-      // Left web
-      const lwMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(dL, wH, wT),
-        matG
-      );
-      lwMesh.position.set(0, dY - sT - wH / 2, gz - cW / 2 - wT / 2);
-      lwMesh.castShadow = true;
-      dGrp.add(lwMesh);
-
-      // Right web
-      const rwMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(dL, wH, wT),
-        matG
-      );
-      rwMesh.position.set(0, dY - sT - wH / 2, gz + cW / 2 + wT / 2);
-      rwMesh.castShadow = true;
-      dGrp.add(rwMesh);
-
-      // Bottom flange
-      const bfMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(dL, bT, cW + wT * 2),
-        matG
-      );
-      bfMesh.position.set(0, dY - sT - wH - bT / 2, gz);
-      bfMesh.castShadow = true;
-      dGrp.add(bfMesh);
-    }
-
-    // New Jersey barriers (extruded profile)
-    function makeNJBarrier(side: "left" | "right") {
-      const shape = new THREE.Shape();
-      if (side === "left") {
-        shape.moveTo(0, 0);
-        shape.lineTo(-0.35, 0);
-        shape.lineTo(-0.35, 0.08);
-        shape.lineTo(-0.22, 0.34);
-        shape.lineTo(-0.15, 0.81);
-        shape.lineTo(0, 0.81);
-        shape.lineTo(0, 0);
-      } else {
-        shape.moveTo(0, 0);
-        shape.lineTo(0.35, 0);
-        shape.lineTo(0.35, 0.08);
-        shape.lineTo(0.22, 0.34);
-        shape.lineTo(0.15, 0.81);
-        shape.lineTo(0, 0.81);
-        shape.lineTo(0, 0);
-      }
-      const extSettings: THREE.ExtrudeGeometryOptions = {
-        depth: dL,
-        bevelEnabled: false,
-      };
-      const geo = new THREE.ExtrudeGeometry(shape, extSettings);
-      const mesh = new THREE.Mesh(geo, matG);
-      mesh.rotation.y = Math.PI / 2;
-      if (side === "left") {
-        mesh.position.set(-dL / 2, dY, -sW / 2);
-      } else {
-        mesh.position.set(-dL / 2, dY, sW / 2);
-      }
-      mesh.castShadow = true;
-      dGrp.add(mesh);
-    }
-    makeNJBarrier("left");
-    makeNJBarrier("right");
-
-    const dH   = sT + wH + bT;
-    const dBot = dY - dH;
-
-    // -----------------------------------------------------------------------
-    // Helper: build a support (pier + cap + pile cap + piles)
-    // -----------------------------------------------------------------------
-    function buildSupport(
-      parentGroup: THREE.Group,
-      opts: {
-        pilarMat: THREE.MeshStandardMaterial;
-        blocMat:  THREE.MeshStandardMaterial;
-        pileMat:  THREE.MeshStandardMaterial;
-        blScale:  number; // scale for bloco dims
-      }
-    ) {
-      const { pilarMat, blocMat, pileMat, blScale } = opts;
-
-      // Pier params
-      const pW  = 1.6;
-      const pH  = 9;
-      const pD  = 1.6;
-      const pSp = 2.8;
-      const tvW = 2.5;
-      const tvH = 1.2;
-      const tvD = pSp + pD + 1.0;
-
-      // Cap beam (travessa)
-      const tvMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(tvW, tvH, tvD),
-        matW
-      );
-      tvMesh.position.set(0, dBot - tvH / 2, 0);
-      tvMesh.castShadow = true;
-      tvMesh.receiveShadow = true;
-      parentGroup.add(tvMesh);
-
-      // Two columns (pilares)
-      for (const pz of [-pSp / 2, pSp / 2]) {
-        const pilMesh = new THREE.Mesh(
-          new THREE.BoxGeometry(pW, pH, pD),
-          pilarMat
-        );
-        pilMesh.position.set(0, dBot - tvH - pH / 2, pz);
-        pilMesh.castShadow = true;
-        pilMesh.receiveShadow = true;
-        parentGroup.add(pilMesh);
-      }
-
-      const pBot = dBot - tvH - pH;
-
-      // Pile cap (bloco)
-      const blW = 4.5 * blScale;
-      const blH = 2.0 * blScale;
-      const blD = (pSp + pD + 3.5) * blScale;
-
-      const blocoMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(blW, blH, blD),
-        blocMat
-      );
-      blocoMesh.position.set(0, pBot - blH / 2, 0);
-      blocoMesh.castShadow = true;
-      blocoMesh.receiveShadow = true;
-      parentGroup.add(blocoMesh);
-
-      // Wireframe edges for bloco
-      const edgesGeo = new THREE.EdgesGeometry(
-        new THREE.BoxGeometry(blW, blH, blD)
-      );
-      const edgesMat = new THREE.LineBasicMaterial({
-        color: 0xffa040,
-        transparent: true,
-        opacity: 0.3,
-      });
-      const edgesMesh = new THREE.LineSegments(edgesGeo, edgesMat);
-      edgesMesh.position.copy(blocoMesh.position);
-      parentGroup.add(edgesMesh);
-
-      // Piles (9 estacas)
-      const plR  = 0.5;
-      const plH  = 8;
-      const plSX = 1.5;
-      const plSZ = 2.6;
-      const pilePositions: [number, number][] = [
-        [-plSX, -plSZ], [0, -plSZ], [plSX, -plSZ],
-        [-plSX,  0],    [0,  0],    [plSX,  0],
-        [-plSX,  plSZ], [0,  plSZ], [plSX,  plSZ],
-      ];
-      const pileY = blocoMesh.position.y - blH / 2 - plH / 2;
-      for (const [px, pz] of pilePositions) {
-        const pileMesh = new THREE.Mesh(
-          new THREE.CylinderGeometry(plR, plR, plH, 16),
-          pileMat
-        );
-        pileMesh.position.set(px, pileY, pz);
-        pileMesh.castShadow = true;
-        pileMesh.receiveShadow = true;
-        parentGroup.add(pileMesh);
-      }
-    }
-
-    // -----------------------------------------------------------------------
-    // Pier 1 — main highlighted support
-    // -----------------------------------------------------------------------
-    const p1Grp = new THREE.Group();
-    p1Grp.position.x = 0; // relative to root (no offset — this is the hero pier)
-    root.add(p1Grp);
-
-    buildSupport(p1Grp, {
-      pilarMat: matPilarHi,
-      blocMat:  matO,
-      pileMat:  matPileHi,
-      blScale:  1.0,
+    // Box girders
+    const wGeo = new THREE.BoxGeometry(dL, wH, wT);
+    const bGeo = new THREE.BoxGeometry(dL, bT, cW + wT*2);
+    [-(gW/2+cW/2), (gW/2+cW/2)].forEach(gz => {
+      const lwZ = gz-cW/2-wT/2, rwZ = gz+cW/2+wT/2, wy = dY-sT-wH/2;
+      addBox(dGrp, wGeo, matW, 0, wy, lwZ, true);
+      addBox(dGrp, wGeo, matW, 0, wy, rwZ, true);
+      addBox(dGrp, bGeo, matW, 0, dY-sT-wH-bT/2, gz, true);
     });
 
-    // -----------------------------------------------------------------------
-    // Pier 2 — secondary support
-    // -----------------------------------------------------------------------
-    const p2Grp = new THREE.Group();
-    p2Grp.position.x = -28;
-    root.add(p2Grp);
+    // New Jersey barriers
+    const njProfile = new THREE.Shape();
+    njProfile.moveTo(0, 0);
+    njProfile.lineTo(0.35, 0);
+    njProfile.lineTo(0.35, 0.08);
+    njProfile.lineTo(0.22, 0.34);
+    njProfile.lineTo(0.15, 0.81);
+    njProfile.lineTo(0, 0.81);
+    njProfile.lineTo(0, 0);
 
-    buildSupport(p2Grp, {
-      pilarMat: matG,
-      blocMat:  matG,
-      pileMat:  matG,
-      blScale:  0.95,
+    const njExtrudeSettings = { depth: dL, bevelEnabled: false };
+    const njGeo = new THREE.ExtrudeGeometry(njProfile, njExtrudeSettings);
+
+    const njProfileR = new THREE.Shape();
+    njProfileR.moveTo(0, 0);
+    njProfileR.lineTo(-0.35, 0);
+    njProfileR.lineTo(-0.35, 0.08);
+    njProfileR.lineTo(-0.22, 0.34);
+    njProfileR.lineTo(-0.15, 0.81);
+    njProfileR.lineTo(0, 0.81);
+    njProfileR.lineTo(0, 0);
+    const njGeoR = new THREE.ExtrudeGeometry(njProfileR, njExtrudeSettings);
+
+    const njLeft = new THREE.Mesh(njGeoR, matG);
+    njLeft.rotation.y = Math.PI / 2;
+    njLeft.position.set(-dL/2, dY, -sW/2);
+    njLeft.castShadow = true;
+    dGrp.add(njLeft);
+
+    const njRight = new THREE.Mesh(njGeo, matG);
+    njRight.rotation.y = Math.PI / 2;
+    njRight.position.set(-dL/2, dY, sW/2);
+    njRight.castShadow = true;
+    dGrp.add(njRight);
+    root.add(dGrp);
+
+    const dH = sT+wH+bT, dBot = dY-dH;
+
+    // ═══ SUBESTRUTURA ═══
+    const pW=1.6, pH=9, pD=1.6, pSp=2.8;
+    const tvW=2.5, tvH=1.2, tvD=pSp+pD+1.0;
+
+    // Travessa
+    addBox(root, new THREE.BoxGeometry(tvW,tvH,tvD), matW, 0, dBot-tvH/2, 0, true);
+
+    // 2 Pilares (using highlight material)
+    const pGeo = new THREE.BoxGeometry(pW,pH,pD);
+    [-pSp/2, pSp/2].forEach(pz => {
+      const p = new THREE.Mesh(pGeo, matPilarHi);
+      p.position.set(0, dBot-tvH-pH/2, pz);
+      p.castShadow=true; p.receiveShadow=true;
+      root.add(p);
+    });
+    const pBot = dBot-tvH-pH;
+
+    // ═══ BLOCO ═══
+    const blW=4.5, blH=2.0, blD=pSp+pD+3.5;
+    const bloco = new THREE.Mesh(new THREE.BoxGeometry(blW,blH,blD), matO);
+    bloco.position.y = pBot-blH/2;
+    bloco.castShadow=true; bloco.receiveShadow=true;
+    root.add(bloco);
+    const blEdge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(blW,blH,blD)), new THREE.LineBasicMaterial({color:0xffa040,transparent:true,opacity:.3}));
+    blEdge.position.copy(bloco.position); root.add(blEdge);
+
+    // ═══ ESTACAS ═══
+    const plR=.5, plH2=8, plGeo=new THREE.CylinderGeometry(plR,plR,plH2,16);
+    const blY=bloco.position.y, plSX=1.5, plSZ=2.6;
+    const plPos: [number,number][] = [
+      [-plSX,-plSZ],[0,-plSZ],[plSX,-plSZ],
+      [-plSX,0],[0,0],[plSX,0],
+      [-plSX,plSZ],[0,plSZ],[plSX,plSZ],
+    ];
+    plPos.forEach(([px,pz])=>{
+      const pile=new THREE.Mesh(plGeo, matPileHi);
+      pile.position.set(px, blY-blH/2-plH2/2, pz);
+      pile.castShadow=true; root.add(pile);
     });
 
-    // -----------------------------------------------------------------------
-    // Pier 3 — tertiary support
-    // -----------------------------------------------------------------------
-    const p3Grp = new THREE.Group();
-    p3Grp.position.x = -56;
-    root.add(p3Grp);
-
-    buildSupport(p3Grp, {
-      pilarMat: matG,
-      blocMat:  matG,
-      pileMat:  matG,
-      blScale:  0.9,
+    // ═══ Segundo apoio ═══
+    const p2=new THREE.Group(); p2.position.x=-28;
+    addBox(p2, new THREE.BoxGeometry(tvW,tvH,tvD), matG, 0, dBot-tvH/2, 0, false);
+    [-pSp/2,pSp/2].forEach(pz => addBox(p2, pGeo, matG, 0, dBot-tvH-pH/2, pz, false));
+    addBox(p2, new THREE.BoxGeometry(blW*.95,blH*.95,blD*.95), matG, 0, pBot-blH/2, 0, false);
+    plPos.forEach(([px,pz])=>{
+      const pile2=new THREE.Mesh(plGeo, matG);
+      pile2.position.set(px, pBot-blH-plH2/2, pz);
+      p2.add(pile2);
     });
+    root.add(p2);
 
-    // -----------------------------------------------------------------------
-    // Target colors for lerp
-    // -----------------------------------------------------------------------
-    const colWhite  = new THREE.Color(0xd8d8d8);
-    const colGray   = new THREE.Color(0xc0c0c0);
-    const colOrange = new THREE.Color(0xff8a1f);
-    const colBlack  = new THREE.Color(0x000000);
+    // ═══ Terceiro apoio ═══
+    const p3=new THREE.Group(); p3.position.x=-56;
+    addBox(p3, new THREE.BoxGeometry(tvW,tvH,tvD), matG, 0, dBot-tvH/2, 0, false);
+    [-pSp/2,pSp/2].forEach(pz => addBox(p3, pGeo, matG, 0, dBot-tvH-pH/2, pz, false));
+    addBox(p3, new THREE.BoxGeometry(blW*.9,blH*.9,blD*.9), matG, 0, pBot-blH/2, 0, false);
+    plPos.forEach(([px,pz])=>{
+      const pile3=new THREE.Mesh(plGeo, matG);
+      pile3.position.set(px, pBot-blH-plH2/2, pz);
+      p3.add(pile3);
+    });
+    root.add(p3);
 
-    // -----------------------------------------------------------------------
-    // Scroll listener
-    // -----------------------------------------------------------------------
-    const SCROLL_HEIGHT_VH = 700;
+    // ═══ CAMERA KEYFRAMES ═══
+    const cam = [
+      { t: 0.00, pos:[28,14,28], look:[0,2,0] },
+      { t: 0.15, pos:[24,11,24], look:[0,2,0] },
+      { t: 0.22, pos:[16,6,16],  look:[0,2,0] },
+      { t: 0.30, pos:[14,4,14],  look:[0,0,0] },
+      { t: 0.42, pos:[12,2,12],  look:[0,-1,0] },
+      { t: 0.50, pos:[12,0,12],  look:[0,-3,0] },
+      { t: 0.58, pos:[11,-1,11], look:[0,-4,0] },
+      { t: 0.72, pos:[10,-2,10], look:[0,-5,0] },
+      { t: 0.78, pos:[13,-2,13], look:[0,-6,0] },
+      { t: 0.88, pos:[15,-2,15], look:[0,-6,0] },
+      { t: 0.94, pos:[16,4,16],  look:[0,0,0] },
+      { t: 1.00, pos:[28,14,28], look:[0,2,0] },
+    ];
 
-    function getScrollP() {
-      const totalScrollable =
-        (SCROLL_HEIGHT_VH / 100) * window.innerHeight - window.innerHeight;
-      return Math.min(1, Math.max(0, window.scrollY / totalScrollable));
+    function getCamera(p: number) {
+      let i = 0;
+      for (let k = 0; k < cam.length - 1; k++) { if (p >= cam[k].t) i = k; }
+      const a = cam[i], b = cam[i+1];
+      const lt = (p - a.t) / (b.t - a.t);
+      const t = lt < 0.5 ? 2*lt*lt : 1 - Math.pow(-2*lt+2, 2) / 2;
+      const pos = a.pos.map((v,j) => v + (b.pos[j]-v) * t);
+      const look = a.look.map((v,j) => v + (b.look[j]-v) * t);
+      return { pos, look };
     }
+
+    // ═══ SLIDE VISIBILITY ═══
+    const slides = [
+      { id:'s1', from:0.00, to:0.14 },
+      { id:'s2', from:0.16, to:0.28 },
+      { id:'s3', from:0.30, to:0.48 },
+      { id:'s4', from:0.52, to:0.74 },
+      { id:'s5', from:0.76, to:0.90 },
+      { id:'s6', from:0.93, to:1.00 },
+    ];
+
+    let scrollP = 0;
+    const scrollSpace = scrollSpaceRef.current!;
+    const totalScroll = scrollSpace.offsetHeight - window.innerHeight;
+
+    // Entrance -- show s1 after 400ms
+    requestAnimationFrame(() => setTimeout(() => {
+      const s1 = slideRefs.current['s1'];
+      if (s1) { s1.classList.add('on'); }
+      if (hintRef.current) hintRef.current.classList.add('on');
+    }, 400));
 
     function onScroll() {
-      scrollRef.current = getScrollP();
+      scrollP = Math.min(1, window.scrollY / totalScroll);
+      if (progressRef.current) progressRef.current.style.width = (scrollP * 100) + '%';
+      if (hintRef.current) hintRef.current.style.opacity = scrollP > 0.03 ? '0' : '1';
+
+      slides.forEach(s => {
+        const el = slideRefs.current[s.id];
+        if (!el) return;
+        const visible = scrollP >= s.from && scrollP <= s.to;
+        el.classList.toggle('on', visible);
+      });
+
+      // Hide canvas after scroll section
+      if (canvasRef.current) {
+        canvasRef.current.style.display = scrollP >= 1 ? 'none' : 'block';
+      }
     }
+    window.addEventListener('scroll', onScroll, { passive: true });
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    // -----------------------------------------------------------------------
     // Resize
-    // -----------------------------------------------------------------------
     function onResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.aspect = innerWidth / innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(innerWidth, innerHeight);
     }
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
 
-    // -----------------------------------------------------------------------
-    // Animation loop
-    // -----------------------------------------------------------------------
+    // ═══ ANIMATE ═══
+    const colOrange = new THREE.Color(0xFF8A1F);
+    const colWhite = new THREE.Color(0xd8d8d8);
+    const colGray = new THREE.Color(0xc0c0c0);
+
     let rafId = 0;
-    let time  = 0;
-    const LERP_SPEED = 0.04;
 
     function animate() {
       rafId = requestAnimationFrame(animate);
-      time += 0.016;
+      if (scrollP >= 1) return; // skip render when past scroll section
 
-      const p = scrollRef.current;
-
-      // Zone detection
-      const inPilar   = p > 0.28 && p < 0.50;
-      const inBlocos  = p > 0.50 && p < 0.76;
-      const inGeotech = p > 0.74 && p < 0.92;
-
-      // Pilar color + emissive (lerp, like HTML)
-      matPilarHi.color.lerp(inPilar ? colOrange : colWhite, LERP_SPEED);
-      matPilarHi.emissive.lerp(inPilar ? colOrange : colBlack, LERP_SPEED);
-      matPilarHi.emissiveIntensity += ((inPilar ? 0.2 : 0) - matPilarHi.emissiveIntensity) * LERP_SPEED;
-
-      // Bloco color + emissive (orange default, white when pilar/geotech active)
-      const blocoTarget = (inPilar || inGeotech) ? colWhite : colOrange;
-      matO.color.lerp(blocoTarget, LERP_SPEED);
-      matO.emissive.lerp(blocoTarget, LERP_SPEED);
-      const blocoEI = (!inPilar && !inGeotech) ? 0.15 + Math.sin(time * 3) * 0.05 : 0;
-      matO.emissiveIntensity += (blocoEI - matO.emissiveIntensity) * LERP_SPEED;
-
-      // Pile color + emissive (lerp, like HTML)
-      matPileHi.color.lerp(inGeotech ? colOrange : colGray, LERP_SPEED);
-      matPileHi.emissive.lerp(inGeotech ? colOrange : colBlack, LERP_SPEED);
-      matPileHi.emissiveIntensity += ((inGeotech ? 0.2 : 0) - matPileHi.emissiveIntensity) * LERP_SPEED;
-
-      // Camera
-      const { pos, look } = lerpCam(p);
+      const { pos, look } = getCamera(scrollP);
       camera.position.set(pos[0], pos[1], pos[2]);
       camera.lookAt(look[0], look[1], look[2]);
 
-      // Update slide opacities directly in DOM (no re-render)
-      for (const s of SLIDES) {
-        const el = slideRefs.current[s.id];
-        if (!el) continue;
-        const op = slideOpacity(s.id, p);
-        el.style.opacity = String(op);
-        el.style.transform = op > 0 ? "translateY(0)" : "translateY(18px)";
-        el.style.pointerEvents = op > 0.5 ? "auto" : "none";
-      }
-      // Progress bar
-      if (progressRef.current) progressRef.current.style.width = `${p * 100}%`;
-      // Scroll hint
-      if (hintRef.current) hintRef.current.style.opacity = p > 0.02 ? "0" : "1";
+      const sp = 0.04;
+      const t = Date.now();
+
+      const inPilar = scrollP > 0.28 && scrollP < 0.50;
+      const inBlocos = scrollP > 0.50 && scrollP < 0.76;
+      const inGeotech = scrollP > 0.74 && scrollP < 0.92;
+
+      // PILARES
+      matPilarHi.color.lerp(inPilar ? colOrange : colWhite, sp);
+      matPilarHi.emissive.lerp(inPilar ? colOrange : new THREE.Color(0x000000), sp);
+      matPilarHi.emissiveIntensity += ((inPilar ? 0.2 : 0) - matPilarHi.emissiveIntensity) * sp;
+
+      // BLOCO
+      const blocoTarget = (inPilar || inGeotech) ? colWhite : colOrange;
+      matO.color.lerp(blocoTarget, sp);
+      matO.emissive.lerp(blocoTarget, sp);
+      matO.emissiveIntensity += (((inBlocos || (!inPilar && !inGeotech)) ? 0.15 + Math.sin(t * 0.003) * 0.05 : 0) - matO.emissiveIntensity) * sp;
+
+      // ESTACAS
+      matPileHi.color.lerp(inGeotech ? colOrange : colGray, sp);
+      matPileHi.emissive.lerp(inGeotech ? colOrange : new THREE.Color(0x000000), sp);
+      matPileHi.emissiveIntensity += ((inGeotech ? 0.2 : 0) - matPileHi.emissiveIntensity) * sp;
 
       renderer.render(scene, camera);
     }
 
     animate();
 
-    // -----------------------------------------------------------------------
     // Cleanup
-    // -----------------------------------------------------------------------
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
       renderer.dispose();
     };
   }, []);
 
-  // -------------------------------------------------------------------------
-  // Slide base style (DOM ref handles opacity/transform in rAF)
-  // -------------------------------------------------------------------------
-  const slideBaseStyle: React.CSSProperties = {
-    position:      "fixed",
-    opacity:       0,
-    transform:     "translateY(18px)",
-    pointerEvents: "none",
-    zIndex:        50,
-  };
-
-  // -------------------------------------------------------------------------
-  // Shared style tokens
-  // -------------------------------------------------------------------------
-  const accent    = "#FF8A1F";
-  const textMain  = "#e0e0e6";
-  const textDim   = "#9da0a8";
-  const bgGlass   = "rgba(11,13,16,0.88)";
-  const borderTop = `3px solid ${accent}`;
-  const panelStyle: React.CSSProperties = {
-    background:    bgGlass,
-    backdropFilter: "blur(24px)",
-    WebkitBackdropFilter: "blur(24px)",
-    border:        "1px solid rgba(255,255,255,0.06)",
-    borderRadius:  14,
-    borderTop,
-    padding:       "32px 36px",
-    maxWidth:      540,
-    width:         "calc(100% - 48px)",
-  };
-  const centeredFixed: React.CSSProperties = {
-    inset:          0,
-    display:        "flex",
-    alignItems:     "center",
-    justifyContent: "center",
-  };
-  const tagStyle: React.CSSProperties = {
-    fontFamily:    "var(--font-mono), monospace",
-    fontSize:       11,
-    letterSpacing:  "0.12em",
-    textTransform: "uppercase" as const,
-    color:          textDim,
-    marginBottom:   12,
-    display:        "flex",
-    alignItems:     "center",
-    gap:            6,
-  };
-  const featureList: React.CSSProperties = {
-    display:       "flex",
-    flexWrap:      "wrap" as const,
-    gap:           8,
-    margin:        "16px 0",
-    padding:       0,
-    listStyle:     "none",
-  };
-  const featureItem: React.CSSProperties = {
-    fontFamily:    "var(--font-mono), monospace",
-    fontSize:       12,
-    background:    "rgba(255,255,255,0.05)",
-    border:        "1px solid rgba(255,255,255,0.09)",
-    borderRadius:   6,
-    padding:       "4px 10px",
-    color:          textDim,
-  };
-  const btnStyle: React.CSSProperties = {
-    display:        "inline-block",
-    marginTop:      20,
-    padding:        "11px 26px",
-    background:     accent,
-    color:          "#0b0d10",
-    borderRadius:   8,
-    fontFamily:     "var(--font-syne), sans-serif",
-    fontWeight:     700,
-    fontSize:       14,
-    textDecoration: "none",
-    cursor:         "pointer",
-    border:         "none",
-  };
-  const btnDisabledStyle: React.CSSProperties = {
-    ...btnStyle,
-    background: "rgba(255,255,255,0.08)",
-    color:      "#666",
-    cursor:     "not-allowed",
-  };
-
   return (
     <>
-      {/* 700vh scroll space */}
-      <div style={{ height: "700vh", position: "relative" }}>
+      <style>{`
+        .bh-slide{position:fixed;z-index:10;pointer-events:none;opacity:0;transition:opacity .7s ease, transform .7s cubic-bezier(.4,0,.2,1);transform:translateY(24px) scale(.97)}
+        .bh-slide.on{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
 
-        {/* Fixed Three.js canvas */}
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "fixed",
-            top:      0,
-            left:     0,
-            width:    "100%",
-            height:   "100%",
-            zIndex:   1,
-          }}
-        />
+        .bh-s-hero{inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
+        .bh-s-hero-inner{max-width:700px;padding:44px 52px}
+        .bh-s-hero .bh-tag{font-family:var(--font-mono), monospace;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#FF8A1F;margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:10px;text-shadow:0 2px 20px rgba(0,0,0,.9)}
+        .bh-s-hero .bh-tag::before,.bh-s-hero .bh-tag::after{content:'';width:28px;height:1px;background:#FF8A1F}
+        .bh-s-hero h1{font-family:var(--font-syne), sans-serif;font-size:clamp(52px,8vw,100px);font-weight:800;line-height:.88;letter-spacing:-.04em;margin-bottom:28px;text-shadow:0 4px 40px rgba(0,0,0,.9),0 0 80px rgba(0,0,0,.7)}
+        .bh-s-hero h1 em{font-family:var(--font-bebas), sans-serif;font-style:normal;color:#FF8A1F;letter-spacing:.04em;font-size:1.1em;display:block;margin-top:8px}
+        .bh-s-hero .bh-stats{display:flex;justify-content:center;gap:32px;margin-bottom:28px;padding:16px 32px;background:rgba(11,13,16,.7);border-radius:8px}
+        .bh-s-hero .bh-stat{font-family:var(--font-mono), monospace;font-size:16px;font-weight:700;color:#fff;letter-spacing:.02em}
+        .bh-s-hero .bh-stat span{color:#FF8A1F}
+        .bh-s-hero p{font-family:var(--font-mono), monospace;font-size:18px;font-weight:500;color:#fff;line-height:1.6;max-width:540px;margin:0 auto;text-shadow:0 2px 30px rgba(0,0,0,1),0 0 60px rgba(0,0,0,.8)}
 
-        {/* Progress bar */}
-        <div
-          ref={progressRef}
-          style={{
-            position:   "fixed",
-            top:        0,
-            left:       0,
-            height:     2,
-            background: accent,
-            width:      "0%",
-            zIndex:     200,
-          }}
-        />
+        .bh-s-mod{left:50%;top:50%;transform:translate(-50%,-50%) translateY(24px) scale(.97);max-width:620px;width:92%;background:rgba(11,13,16,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:40px 48px;text-align:center;border-top:3px solid #FF8A1F;overflow:hidden}
+        .bh-s-mod.on{transform:translate(-50%,-50%) translateY(0) scale(1)}
+        .bh-s-mod .bh-mod-tag{font-family:var(--font-mono), monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#FF8A1F;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+        .bh-s-mod .bh-mod-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.4)}
+        .bh-s-mod .bh-mod-tag.bh-soon{color:#666}.bh-s-mod .bh-mod-tag.bh-soon::before{background:#45454f;box-shadow:none}
+        .bh-s-mod .bh-mod-name{font-family:var(--font-syne), sans-serif;font-size:clamp(36px,4.5vw,52px);font-weight:800;letter-spacing:-.03em;line-height:.95;margin-bottom:18px;color:#fff}
+        .bh-s-mod .bh-mod-desc{font-family:var(--font-mono), monospace;font-size:15px;color:#e0e0e6;line-height:1.65;margin-bottom:24px}
+        .bh-s-mod .bh-mod-features{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;justify-content:center}
+        .bh-s-mod .bh-mod-feat{font-family:var(--font-mono), monospace;font-size:12px;font-weight:500;padding:6px 14px;border-radius:6px;border:1px solid rgba(255,138,31,.2);color:#fff;background:rgba(255,138,31,.06)}
+        .bh-s-mod .bh-mod-cta{font-family:var(--font-syne), sans-serif;font-size:14px;font-weight:700;color:#0B0D10;background:#FF8A1F;padding:10px 24px;border-radius:7px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:all .2s}.bh-s-mod .bh-mod-cta:hover{background:#ff9b2e;gap:12px;box-shadow:0 4px 20px rgba(255,138,31,.3)}
+        .bh-s-mod .bh-mod-cta.bh-disabled{background:transparent;border:1px solid #333;color:#666;pointer-events:none;box-shadow:none}
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s1 — Hero */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s1"] = el; }} style={{ ...slideBaseStyle, opacity: 1, transform: "translateY(0)", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ textAlign: "center", maxWidth: 700, padding: "44px 52px" }}>
-            {/* Tag with dashes */}
-            <div style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 12, fontWeight: 600, letterSpacing: "0.14em",
-              textTransform: "uppercase" as const, color: accent,
-              marginBottom: 24, display: "flex", alignItems: "center",
-              justifyContent: "center", gap: 10,
-              textShadow: "0 2px 20px rgba(0,0,0,.9)",
-            }}>
-              <span style={{ width: 28, height: 1, background: accent, display: "inline-block" }} />
-              Estrutural · Geotecnia
-              <span style={{ width: 28, height: 1, background: accent, display: "inline-block" }} />
-            </div>
+        .bh-s-trans{left:50%;top:50%;transform:translate(-50%,-50%) translateY(24px) scale(.95);text-align:center;max-width:700px;padding:48px 56px;background:rgba(11,13,16,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.06);border-radius:16px}
+        .bh-s-trans.on{transform:translate(-50%,-50%) translateY(0) scale(1)}
+        .bh-s-trans p{font-family:var(--font-syne), sans-serif;font-size:clamp(30px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing:-.03em}
+        .bh-s-trans p mark{background:none;color:#FF8A1F;position:relative}
+        .bh-s-trans p .bh-mark-underline{position:absolute;bottom:-4px;left:0;right:0;height:3px;background:#FF8A1F;border-radius:2px;opacity:.6}
 
-            {/* Title — "Do solo" in Syne 800, "À ESTRUTURA." in Bebas Neue block */}
-            <h1 style={{
-              fontFamily: "var(--font-syne), sans-serif",
-              fontSize: "clamp(52px, 8vw, 100px)", fontWeight: 800,
-              lineHeight: 0.88, letterSpacing: "-0.04em",
-              marginBottom: 28, color: "#ffffff",
-              textShadow: "0 4px 40px rgba(0,0,0,.9), 0 0 80px rgba(0,0,0,.7)",
-            }}>
-              Do solo
-              <em style={{
-                fontFamily: "var(--font-bebas), sans-serif",
-                fontStyle: "normal", color: accent,
-                letterSpacing: "0.04em", fontSize: "1.1em",
-                display: "block", marginTop: 8,
-              }}>
-                À ESTRUTURA.
-              </em>
-            </h1>
+        .bh-s-cta{left:50%;top:50%;transform:translate(-50%,-50%) translateY(24px) scale(.95);text-align:center;background:rgba(11,13,16,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:56px 64px}
+        .bh-s-cta.on{transform:translate(-50%,-50%) translateY(0) scale(1)}
+        .bh-s-cta h2{font-family:var(--font-syne), sans-serif;font-size:clamp(36px,5vw,64px);font-weight:800;letter-spacing:-.04em;line-height:.92;margin-bottom:12px;color:#fff}
+        .bh-s-cta h2 em{font-family:var(--font-bebas), sans-serif;font-style:normal;display:block;margin-top:6px;color:#FF8A1F;letter-spacing:.04em;font-size:1.05em;opacity:.7}
+        .bh-s-cta p{font-family:var(--font-mono), monospace;font-size:14px;color:#888;margin-bottom:32px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6}
+        .bh-s-cta .bh-cta-btn{font-family:var(--font-syne), sans-serif;background:#FF8A1F;color:#0B0D10;padding:16px 44px;border-radius:9px;font-weight:700;font-size:16px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;pointer-events:auto;text-decoration:none}.bh-s-cta .bh-cta-btn:hover{background:#ff9b2e;transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,138,31,.3)}
 
-            {/* Stats bar — inline like HTML */}
-            <div style={{
-              display: "flex", justifyContent: "center", gap: 32,
-              marginBottom: 28, padding: "16px 32px",
-              background: "rgba(11,13,16,0.7)", borderRadius: 8,
-              flexWrap: "wrap" as const,
-            }}>
-              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
-                <span style={{ color: accent }}>100%</span> na nuvem
-              </span>
-              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
-                <span style={{ color: accent }}>NBR</span> 6118
-              </span>
-              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
-                <span style={{ color: accent }}>PDF</span> automático
-              </span>
-            </div>
+        .bh-scroll-hint{position:fixed;bottom:24px;right:36px;z-index:20;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:0;transition:opacity .5s}
+        .bh-scroll-hint.on{opacity:1}
+        .bh-scroll-hint span{font-family:var(--font-mono), monospace;font-size:9px;letter-spacing:.14em;color:#3a3a42}
+        .bh-scroll-hint .bh-line{width:1px;height:24px;background:linear-gradient(to bottom,#3a3a42,transparent);animation:bh-sp 2s ease infinite}
+        @keyframes bh-sp{0%,100%{opacity:.3;transform:scaleY(.5)}50%{opacity:.7;transform:scaleY(1)}}
 
-            {/* Description — IBM Plex Mono, white, text-shadow */}
-            <p style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 18, fontWeight: 500, color: "#fff",
-              lineHeight: 1.6, maxWidth: 540, margin: "0 auto",
-              textShadow: "0 2px 30px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,.8)",
-            }}>
-              Calcule blocos, estacas e pilares direto no navegador.
-              Sem instalação, sem planilha.
-            </p>
+        .bh-progress{position:fixed;top:0;left:0;height:2px;background:#FF8A1F;z-index:200;transition:width .1s}
+      `}</style>
+
+      <div ref={scrollSpaceRef} style={{ height: "700vh", position: "relative", zIndex: 0 }}>
+        <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1 }} />
+        <div ref={progressRef} className="bh-progress" style={{ width: "0%" }} />
+      </div>
+
+      {/* SLIDE 1: Hero */}
+      <div ref={el => { slideRefs.current['s1'] = el; }} className="bh-slide bh-s-hero">
+        <div className="bh-s-hero-inner">
+          <div className="bh-tag">Estrutural &middot; Geotecnia</div>
+          <h1>Do solo<em>&Agrave; ESTRUTURA.</em></h1>
+          <div className="bh-stats">
+            <div className="bh-stat"><span>100%</span> na nuvem</div>
+            <div className="bh-stat"><span>NBR</span> 6118</div>
+            <div className="bh-stat"><span>PDF</span> autom&aacute;tico</div>
           </div>
+          <p>Calcule blocos, estacas e pilares direto no navegador. Sem instala&ccedil;&atilde;o, sem planilha.</p>
         </div>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s2 — Transition */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s2"] = el; }} style={{ ...slideBaseStyle, ...centeredFixed }}>
-          <div style={panelStyle}>
-            <p
-              style={{
-                fontFamily:  "var(--font-syne), sans-serif",
-                fontSize:    "clamp(22px, 3vw, 32px)",
-                fontWeight:   700,
-                color:        textMain,
-                lineHeight:   1.5,
-                margin:       0,
-              }}
-            >
-              Abandone planilhas.
-              <br />
-              Um módulo por disciplina.
-              <br />
-              <mark
-                style={{
-                  background:   "transparent",
-                  color:         accent,
-                  fontStyle:    "normal",
-                }}
-              >
-                Use só o que precisar.
-              </mark>
-            </p>
-          </div>
-        </div>
+      {/* SLIDE 2: Transition */}
+      <div ref={el => { slideRefs.current['s2'] = el; }} className="bh-slide bh-s-trans">
+        <p>Abandone planilhas.<br />Um m&oacute;dulo por disciplina.<br /><mark>Use s&oacute; o que precisar.<span className="bh-mark-underline" /></mark></p>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s3 — BY.PILAR */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s3"] = el; }} style={{ ...slideBaseStyle, ...centeredFixed }}>
-          <div style={panelStyle}>
-            <div style={tagStyle}>
-              <span
-                style={{
-                  width:        7,
-                  height:       7,
-                  borderRadius: "50%",
-                  background:   "#666",
-                  display:      "inline-block",
-                }}
-              />
-              Em breve
-            </div>
-            <div
-              style={{
-                fontFamily:   "var(--font-bebas), sans-serif",
-                fontSize:      42,
-                color:         "#ffffff",
-                letterSpacing: "0.04em",
-                marginBottom:  10,
-              }}
-            >
-              BY.PILAR
-            </div>
-            <p
-              style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                fontSize:    15,
-                color:       textDim,
-                lineHeight:  1.6,
-                margin:      "0 0 4px",
-              }}
-            >
-              Dimensionamento de pilares de concreto armado. Flexão composta
-              oblíqua, envoltória resistente, esbeltez e efeitos de 2ª ordem.
-            </p>
-            <ul style={featureList}>
-              {[
-                "Flexão oblíqua",
-                "Envoltória",
-                "2ª ordem",
-                "NBR 6118",
-              ].map((f) => (
-                <li key={f} style={featureItem}>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <button disabled style={btnDisabledStyle}>
-              Disponível em breve
-            </button>
-          </div>
+      {/* SLIDE 3: BY.PILAR */}
+      <div ref={el => { slideRefs.current['s3'] = el; }} className="bh-slide bh-s-mod">
+        <div className="bh-mod-tag bh-soon">Em breve</div>
+        <div className="bh-mod-name">BY.PILAR</div>
+        <div className="bh-mod-desc">Dimensionamento de pilares de concreto armado. Flex&atilde;o composta obl&iacute;qua, envolt&oacute;ria resistente, esbeltez e efeitos de 2&ordf; ordem.</div>
+        <div className="bh-mod-features">
+          <span className="bh-mod-feat">Flex&atilde;o obl&iacute;qua</span>
+          <span className="bh-mod-feat">Envolt&oacute;ria</span>
+          <span className="bh-mod-feat">2&ordf; ordem</span>
+          <span className="bh-mod-feat">NBR 6118</span>
         </div>
+        <span className="bh-mod-cta bh-disabled">Dispon&iacute;vel em breve</span>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s4 — BY.BLOCOS */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s4"] = el; }} style={{ ...slideBaseStyle, ...centeredFixed }}>
-          <div style={panelStyle}>
-            <div style={tagStyle}>
-              <span
-                style={{
-                  width:        7,
-                  height:       7,
-                  borderRadius: "50%",
-                  background:   "#22c55e",
-                  display:      "inline-block",
-                }}
-              />
-              Ativo
-            </div>
-            <div
-              style={{
-                fontFamily:   "var(--font-bebas), sans-serif",
-                fontSize:      42,
-                color:         "#ffffff",
-                letterSpacing: "0.04em",
-                marginBottom:  10,
-              }}
-            >
-              BY.BLOCOS
-            </div>
-            <p
-              style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                fontSize:    15,
-                color:       textDim,
-                lineHeight:  1.6,
-                margin:      "0 0 4px",
-              }}
-            >
-              Dimensionamento de blocos de coroamento sobre estacas por bielas e
-              tirantes. Modele layouts livres com múltiplos pilares e tipologias
-              variadas.
-            </p>
-            <ul style={featureList}>
-              {[
-                "13 tipologias",
-                "Modelagem livre",
-                "Múltiplos pilares",
-                "Bielas e tirantes avançados",
-                "Seções diversas",
-                "Rigidez das estacas",
-                "Interação solo-estrutura",
-                "Relatório PDF",
-              ].map((f) => (
-                <li key={f} style={featureItem}>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, marginTop: 20 }}>
-              <a href={BLOCOS_URL} style={btnStyle}>
-                Acessar BY.BLOCOS →
-              </a>
-              <a href="/blocos" style={{ ...btnStyle, background: "transparent", border: `1px solid rgba(255,138,31,0.35)`, color: "#FF8A1F" }}>
-                Saiba mais
-              </a>
-            </div>
-          </div>
+      {/* SLIDE 4: BY.BLOCOS */}
+      <div ref={el => { slideRefs.current['s4'] = el; }} className="bh-slide bh-s-mod">
+        <div className="bh-mod-tag">Ativo</div>
+        <div className="bh-mod-name">BY.BLOCOS</div>
+        <div className="bh-mod-desc">Dimensionamento de blocos de coroamento sobre estacas por bielas e tirantes. Modelo 3D com iso&aacute;rea ponderada que adapta as bielas ao carregamento.</div>
+        <div className="bh-mod-features">
+          <span className="bh-mod-feat">13 tipologias</span>
+          <span className="bh-mod-feat">Modelagem livre</span>
+          <span className="bh-mod-feat">M&uacute;ltiplos pilares</span>
+          <span className="bh-mod-feat">Bielas e tirantes avan&ccedil;ados</span>
+          <span className="bh-mod-feat">Se&ccedil;&otilde;es diversas</span>
+          <span className="bh-mod-feat">Rigidez das estacas</span>
+          <span className="bh-mod-feat">Intera&ccedil;&atilde;o solo-estrutura</span>
+          <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
         </div>
+        <a href={BLOCOS_URL} className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
+        <a href="/blocos" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s5 — BY.GEOTECH */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s5"] = el; }} style={{ ...slideBaseStyle, ...centeredFixed }}>
-          <div style={panelStyle}>
-            <div style={tagStyle}>
-              <span
-                style={{
-                  width:        7,
-                  height:       7,
-                  borderRadius: "50%",
-                  background:   "#22c55e",
-                  display:      "inline-block",
-                }}
-              />
-              Ativo
-            </div>
-            <div
-              style={{
-                fontFamily:   "var(--font-bebas), sans-serif",
-                fontSize:      42,
-                color:         "#ffffff",
-                letterSpacing: "0.04em",
-                marginBottom:  10,
-              }}
-            >
-              BY.GEOTECH
-            </div>
-            <p
-              style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                fontSize:    15,
-                color:       textDim,
-                lineHeight:  1.6,
-                margin:      "0 0 4px",
-              }}
-            >
-              Capacidade de carga vertical e horizontal de estacas. Métodos
-              semiempíricos e curvas p-y para análise de carregamento lateral.
-            </p>
-            <ul style={featureList}>
-              {[
-                "Aoki-Velloso",
-                "Décourt-Quaresma",
-                "P-Y (Reese/Matlock)",
-                "12 tipos de estaca",
-                "Relatório PDF",
-              ].map((f) => (
-                <li key={f} style={featureItem}>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, marginTop: 20 }}>
-              <a href={GEOTECH_URL} style={btnStyle}>
-                Acessar BY.GEOTECH →
-              </a>
-              <a href="/geotech" style={{ ...btnStyle, background: "transparent", border: `1px solid rgba(255,138,31,0.35)`, color: "#FF8A1F" }}>
-                Saiba mais
-              </a>
-            </div>
-          </div>
+      {/* SLIDE 5: BY.GEOTECH */}
+      <div ref={el => { slideRefs.current['s5'] = el; }} className="bh-slide bh-s-mod">
+        <div className="bh-mod-tag">Ativo</div>
+        <div className="bh-mod-name">BY.GEOTECH</div>
+        <div className="bh-mod-desc">Capacidade de carga vertical e horizontal de estacas isoladas. Dois m&eacute;todos consagrados em paralelo com envolt&oacute;ria autom&aacute;tica.</div>
+        <div className="bh-mod-features">
+          <span className="bh-mod-feat">Aoki-Velloso</span>
+          <span className="bh-mod-feat">D&eacute;court-Quaresma</span>
+          <span className="bh-mod-feat">P-Y (Reese/Matlock)</span>
+          <span className="bh-mod-feat">12 tipos de estaca</span>
+          <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
         </div>
+        <a href={GEOTECH_URL} className="bh-mod-cta">Acessar BY.GEOTECH &rarr;</a>
+        <a href="/geotech" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* SLIDE s6 — CTA */}
-        {/* ------------------------------------------------------------------ */}
-        <div ref={(el) => { slideRefs.current["s6"] = el; }} style={{ ...slideBaseStyle, ...centeredFixed }}>
-          <div style={{ ...panelStyle, textAlign: "center", maxWidth: 480 }}>
-            <h2
-              style={{
-                fontFamily:   "var(--font-bebas), sans-serif",
-                fontSize:     "clamp(38px, 6vw, 58px)",
-                color:         "#ffffff",
-                letterSpacing: "0.02em",
-                margin:        "0 0 16px",
-                lineHeight:    1.1,
-              }}
-            >
-              Seu próximo projeto{" "}
-              <em style={{ color: accent, fontStyle: "normal" }}>
-                começa aqui.
-              </em>
-            </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-syne), sans-serif",
-                fontSize:    15,
-                color:       textDim,
-                lineHeight:  1.6,
-                margin:      "0 0 8px",
-              }}
-            >
-              Acesse a plataforma e calcule seu primeiro bloco agora. Sem
-              instalação, sem planilha, direto no navegador.
-            </p>
-            <a href={BLOCOS_URL} style={{ ...btnStyle, fontSize: 16, padding: "13px 32px" }}>
-              Acessar plataforma →
-            </a>
-          </div>
-        </div>
+      {/* SLIDE 6: CTA */}
+      <div ref={el => { slideRefs.current['s6'] = el; }} className="bh-slide bh-s-cta">
+        <h2>Seu pr&oacute;ximo projeto<em>come&ccedil;a aqui.</em></h2>
+        <p>Acesse a plataforma e calcule seu primeiro bloco agora. Sem instala&ccedil;&atilde;o, sem planilha, direto no navegador.</p>
+        <a href="/painel" className="bh-cta-btn">Acessar plataforma &rarr;</a>
+      </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Scroll hint */}
-        {/* ------------------------------------------------------------------ */}
-        <div
-          ref={hintRef}
-          style={{
-            position:       "fixed",
-            bottom:          32,
-            left:           "50%",
-            transform:      "translateX(-50%)",
-            zIndex:          100,
-            display:        "flex",
-            flexDirection:  "column",
-            alignItems:     "center",
-            gap:             8,
-            opacity:         1,
-            transition:     "opacity 0.4s",
-            pointerEvents:  "none",
-          }}
-        >
-            <span
-              style={{
-                fontFamily:    "var(--font-mono), monospace",
-                fontSize:       11,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase" as const,
-                color:          textDim,
-              }}
-            >
-              scroll
-            </span>
-            {/* Animated chevron */}
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              style={{
-                animation: "scrollBounce 1.4s ease-in-out infinite",
-              }}
-            >
-              <path
-                d="M5 7l5 5 5-5"
-                stroke={accent}
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <style>{`
-              @keyframes scrollBounce {
-                0%,100% { transform: translateY(0); }
-                50%      { transform: translateY(5px); }
-              }
-            `}</style>
-        </div>
+      {/* Scroll hint */}
+      <div ref={hintRef} className="bh-scroll-hint">
+        <span>SCROLL</span>
+        <div className="bh-line" />
       </div>
     </>
   );

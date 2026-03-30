@@ -128,7 +128,18 @@ export default function BlocosPage() {
             </div>
 
             {/* Right — Planta / Corte / 3D animation */}
-            <div className="w-full lg:w-[420px] aspect-square rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
+            <div className="blocos-hero-visual relative w-full lg:w-[420px] aspect-square rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
+              <style>{`
+                .blocos-hero-visual .hero-visual-container {
+                  position: relative !important;
+                  right: auto !important;
+                  top: auto !important;
+                  transform: none !important;
+                  width: 100% !important;
+                  height: 100% !important;
+                  display: block !important;
+                }
+              `}</style>
               <HeroVisualLazy />
             </div>
           </div>

@@ -42,7 +42,13 @@ export function AuthForm({ type }: AuthFormProps) {
         setLoading(false);
       } else {
         setSuccess(isLogin ? "Login realizado." : "Conta criada! Verifique seu e-mail.");
-        router.push(isLogin ? "/painel" : "/login");
+        if (isLogin) {
+          // Hard redirect to avoid router.push conflicts with revalidatePath
+          window.location.href = "/painel";
+        } else {
+          setLoading(false);
+          // Stay on page — user needs to verify email
+        }
       }
     } catch {
       setError("Ocorreu um erro. Tente novamente.");

@@ -423,7 +423,7 @@ export function BridgeHero() {
           <span className="bh-mod-feat">Intera&ccedil;&atilde;o solo-estrutura</span>
           <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
         </div>
-        <a href={BLOCOS_URL} className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
+        <a href={BLOCOS_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
         <a href="/blocos" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
       </div>
 
@@ -439,7 +439,7 @@ export function BridgeHero() {
           <span className="bh-mod-feat">12 tipos de estaca</span>
           <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
         </div>
-        <a href={GEOTECH_URL} className="bh-mod-cta">Acessar BY.GEOTECH &rarr;</a>
+        <a href={GEOTECH_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.GEOTECH &rarr;</a>
         <a href="/geotech" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
       </div>
 

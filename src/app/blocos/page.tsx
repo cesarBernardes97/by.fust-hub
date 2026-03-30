@@ -101,9 +101,29 @@ export default function BlocosPage() {
             Voltar
           </Link>
 
-          <div className="flex flex-col lg:flex-row gap-10 items-center">
-            {/* Left — text */}
-            <div className="flex-1">
+          <div className="relative min-h-[500px] flex items-center">
+            {/* Background animation — behind text, like main page */}
+            <div className="blocos-hero-visual">
+              <style>{`
+                .blocos-hero-visual .hero-visual-container {
+                  position: absolute !important;
+                  right: 0 !important;
+                  top: 50% !important;
+                  transform: translateY(-50%) !important;
+                  width: 55% !important;
+                  height: auto !important;
+                  display: block !important;
+                  opacity: 0.85;
+                }
+                @media (max-width: 900px) {
+                  .blocos-hero-visual .hero-visual-container { display: none !important; }
+                }
+              `}</style>
+              <HeroVisualLazy />
+            </div>
+
+            {/* Text — on top */}
+            <div className="relative z-10 max-w-xl">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-1.5 w-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-500" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary/80">Fundações</span>
@@ -112,7 +132,7 @@ export default function BlocosPage() {
               <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
                 BY.BLOCOS
               </h1>
-              <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-8">
+              <p className="text-muted-foreground text-lg max-w-lg leading-relaxed mb-8">
                 Dimensionamento de blocos de coroamento sobre estacas pelo método de bielas e tirantes (STM) tridimensional, conforme NBR 6118:2023.
               </p>
 
@@ -125,22 +145,6 @@ export default function BlocosPage() {
                 Abrir BY.BLOCOS
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </a>
-            </div>
-
-            {/* Right — Planta / Corte / 3D animation */}
-            <div className="blocos-hero-visual relative w-full lg:w-[420px] aspect-square rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
-              <style>{`
-                .blocos-hero-visual .hero-visual-container {
-                  position: relative !important;
-                  right: auto !important;
-                  top: auto !important;
-                  transform: none !important;
-                  width: 100% !important;
-                  height: 100% !important;
-                  display: block !important;
-                }
-              `}</style>
-              <HeroVisualLazy />
             </div>
           </div>
         </section>

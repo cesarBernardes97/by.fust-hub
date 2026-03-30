@@ -816,65 +816,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────── */}
-        <section className="relative text-center py-32 md:py-40 px-6 md:px-12">
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            style={{
-              width: 600,
-              height: 600,
-              background:
-                "radial-gradient(circle, rgba(245, 130, 13, 0.06) 0%, transparent 60%)",
-            }}
-          />
-          <div className="reveal relative">
-            <h2
-              className="font-syne mb-5"
-              style={{
-                fontSize: "clamp(36px, 5vw, 64px)",
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-                lineHeight: 1.05,
-                color: "var(--text)",
-              }}
-            >
-              Seu próximo projeto
-              <br />
-              começa{" "}
-              <em
-                className="font-bebas not-italic"
-                style={{
-                  fontWeight: 400,
-                  color: "var(--accent-landing)",
-                  letterSpacing: "0.04em",
-                  fontSize: "1.15em",
-                }}
-              >
-                AQUI.
-              </em>
-            </h2>
-            <p
-              className="mx-auto mb-10"
-              style={{
-                fontSize: 17,
-                color: "var(--text-dim)",
-                maxWidth: 460,
-                lineHeight: 1.6,
-              }}
-            >
-              Sem instalação, sem planilha, sem complicação. Acesse a plataforma
-              e calcule seu primeiro bloco agora.
-            </p>
-            <a
-              href={BLOCOS_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-large"
-            >
-              Acessar plataforma &rarr;
-            </a>
-          </div>
-        </section>
+        {/* CTA removido — já aparece no slide s6 do BridgeHero */}
 
         </div>{/* end post-scroll wrapper */}
       </main>

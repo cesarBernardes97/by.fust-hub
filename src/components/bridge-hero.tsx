@@ -116,14 +116,14 @@ export function BridgeHero() {
     // Scene
     // -----------------------------------------------------------------------
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0b0d10);
+    scene.fog = new THREE.Fog(0x0b0d10, 50, 140);
 
     // Camera
     const camera = new THREE.PerspectiveCamera(
-      45,
+      30,
       window.innerWidth / window.innerHeight,
       0.1,
-      500
+      200
     );
     camera.position.set(28, 14, 28);
     camera.lookAt(0, 2, 0);
@@ -135,8 +135,9 @@ export function BridgeHero() {
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
     dirLight.position.set(8, 15, 10);
     dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
+    dirLight.shadow.mapSize.set(1024, 1024);
+    dirLight.shadow.camera.near   =  0.5;
+    dirLight.shadow.camera.far    = 80;
     dirLight.shadow.camera.left   = -30;
     dirLight.shadow.camera.right  =  30;
     dirLight.shadow.camera.top    =  30;
@@ -150,19 +151,19 @@ export function BridgeHero() {
     // -----------------------------------------------------------------------
     // Materials
     // -----------------------------------------------------------------------
-    const matW = new THREE.MeshStandardMaterial({ color: 0xd8d8d8 });
-    const matG = new THREE.MeshStandardMaterial({ color: 0xb0b0b0 });
+    const matW = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, roughness: 0.85 });
+    const matG = new THREE.MeshStandardMaterial({ color: 0xb0b0b0, roughness: 0.9 });
     const matO = new THREE.MeshStandardMaterial({
-      color: 0xff8a1f,
+      color: 0xff8a1f, roughness: 0.5,
       emissive: new THREE.Color(0xff8a1f),
-      emissiveIntensity: 0.18,
+      emissiveIntensity: 0.12,
     });
-    const matP = new THREE.MeshStandardMaterial({ color: 0xc0c0c0 });
-    const matGnd = new THREE.MeshStandardMaterial({ color: 0x0e1014 });
+    const matP = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.9 });
+    const matGnd = new THREE.MeshStandardMaterial({ color: 0x0e1014, roughness: 1 });
 
     // Highlight materials (mutable)
-    const matPilarHi = new THREE.MeshStandardMaterial({ color: 0xd8d8d8 });
-    const matPileHi  = new THREE.MeshStandardMaterial({ color: 0xb0b0b0 });
+    const matPilarHi = new THREE.MeshStandardMaterial({ color: 0xd8d8d8, roughness: 0.7, emissive: new THREE.Color(0xffffff), emissiveIntensity: 0 });
+    const matPileHi  = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, roughness: 0.8, emissive: new THREE.Color(0xffffff), emissiveIntensity: 0 });
 
     // -----------------------------------------------------------------------
     // Scene root group
@@ -425,13 +426,9 @@ export function BridgeHero() {
     // Target colors for lerp
     // -----------------------------------------------------------------------
     const colWhite  = new THREE.Color(0xd8d8d8);
-    const colGray   = new THREE.Color(0xb0b0b0);
+    const colGray   = new THREE.Color(0xc0c0c0);
     const colOrange = new THREE.Color(0xff8a1f);
-
-    // Current interpolated colors
-    const curPilarColor = colWhite.clone();
-    const curPileColor  = colGray.clone();
-    const curBlocColor  = colOrange.clone();
+    const colBlack  = new THREE.Color(0x000000);
 
     // -----------------------------------------------------------------------
     // Scroll listener
@@ -478,41 +475,22 @@ export function BridgeHero() {
       const inBlocos  = p > 0.50 && p < 0.76;
       const inGeotech = p > 0.74 && p < 0.92;
 
-      // Target pilar color
-      const tgtPilar = inPilar ? colOrange : colWhite;
-      curPilarColor.lerp(tgtPilar, LERP_SPEED);
-      matPilarHi.color.copy(curPilarColor);
-      if (inPilar) {
-        matPilarHi.emissive = colOrange;
-        matPilarHi.emissiveIntensity = 0.18;
-      } else {
-        matPilarHi.emissive = new THREE.Color(0x000000);
-        matPilarHi.emissiveIntensity = 0;
-      }
+      // Pilar color + emissive (lerp, like HTML)
+      matPilarHi.color.lerp(inPilar ? colOrange : colWhite, LERP_SPEED);
+      matPilarHi.emissive.lerp(inPilar ? colOrange : colBlack, LERP_SPEED);
+      matPilarHi.emissiveIntensity += ((inPilar ? 0.2 : 0) - matPilarHi.emissiveIntensity) * LERP_SPEED;
 
-      // Target bloco color (orange unless inPilar or inGeotech)
-      const tgtBloc = inPilar || inGeotech ? colWhite : colOrange;
-      curBlocColor.lerp(tgtBloc, LERP_SPEED);
-      matO.color.copy(curBlocColor);
-      if (!inPilar && !inGeotech) {
-        matO.emissive = colOrange;
-        matO.emissiveIntensity = 0.12 + 0.06 * Math.sin(time * 2.0);
-      } else {
-        matO.emissive = new THREE.Color(0x000000);
-        matO.emissiveIntensity = 0;
-      }
+      // Bloco color + emissive (orange default, white when pilar/geotech active)
+      const blocoTarget = (inPilar || inGeotech) ? colWhite : colOrange;
+      matO.color.lerp(blocoTarget, LERP_SPEED);
+      matO.emissive.lerp(blocoTarget, LERP_SPEED);
+      const blocoEI = (!inPilar && !inGeotech) ? 0.15 + Math.sin(time * 3) * 0.05 : 0;
+      matO.emissiveIntensity += (blocoEI - matO.emissiveIntensity) * LERP_SPEED;
 
-      // Target pile color
-      const tgtPile = inGeotech ? colOrange : colGray;
-      curPileColor.lerp(tgtPile, LERP_SPEED);
-      matPileHi.color.copy(curPileColor);
-      if (inGeotech) {
-        matPileHi.emissive = colOrange;
-        matPileHi.emissiveIntensity = 0.18;
-      } else {
-        matPileHi.emissive = new THREE.Color(0x000000);
-        matPileHi.emissiveIntensity = 0;
-      }
+      // Pile color + emissive (lerp, like HTML)
+      matPileHi.color.lerp(inGeotech ? colOrange : colGray, LERP_SPEED);
+      matPileHi.emissive.lerp(inGeotech ? colOrange : colBlack, LERP_SPEED);
+      matPileHi.emissiveIntensity += ((inGeotech ? 0.2 : 0) - matPileHi.emissiveIntensity) * LERP_SPEED;
 
       // Camera
       const { pos, look } = lerpCam(p);

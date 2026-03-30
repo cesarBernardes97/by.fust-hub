@@ -564,7 +564,7 @@ export function BridgeHero() {
     justifyContent: "center",
   };
   const tagStyle: React.CSSProperties = {
-    fontFamily:    "'IBM Plex Mono', monospace",
+    fontFamily:    "var(--font-mono), monospace",
     fontSize:       11,
     letterSpacing:  "0.12em",
     textTransform: "uppercase" as const,
@@ -583,7 +583,7 @@ export function BridgeHero() {
     listStyle:     "none",
   };
   const featureItem: React.CSSProperties = {
-    fontFamily:    "'IBM Plex Mono', monospace",
+    fontFamily:    "var(--font-mono), monospace",
     fontSize:       12,
     background:    "rgba(255,255,255,0.05)",
     border:        "1px solid rgba(255,255,255,0.09)",
@@ -598,7 +598,7 @@ export function BridgeHero() {
     background:     accent,
     color:          "#0b0d10",
     borderRadius:   8,
-    fontFamily:     "'Syne', sans-serif",
+    fontFamily:     "var(--font-syne), sans-serif",
     fontWeight:     700,
     fontSize:       14,
     textDecoration: "none",
@@ -648,84 +648,65 @@ export function BridgeHero() {
         {/* SLIDE s1 — Hero */}
         {/* ------------------------------------------------------------------ */}
         <div ref={(el) => { slideRefs.current["s1"] = el; }} style={{ ...slideBaseStyle, opacity: 1, transform: "translateY(0)", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ textAlign: "center", padding: "0 24px" }}>
-            <p
-              style={{
-                fontFamily:    "'IBM Plex Mono', monospace",
-                fontSize:       13,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase" as const,
-                color:          accent,
-                marginBottom:   18,
-              }}
-            >
+          <div style={{ textAlign: "center", maxWidth: 700, padding: "44px 52px" }}>
+            {/* Tag with dashes */}
+            <div style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 12, fontWeight: 600, letterSpacing: "0.14em",
+              textTransform: "uppercase" as const, color: accent,
+              marginBottom: 24, display: "flex", alignItems: "center",
+              justifyContent: "center", gap: 10,
+              textShadow: "0 2px 20px rgba(0,0,0,.9)",
+            }}>
+              <span style={{ width: 28, height: 1, background: accent, display: "inline-block" }} />
               Estrutural · Geotecnia
-            </p>
-            <h1
-              style={{
-                fontFamily:   "'Bebas Neue', sans-serif",
-                fontSize:     "clamp(56px, 10vw, 110px)",
-                lineHeight:   1.0,
-                color:        "#ffffff",
-                margin:       0,
-                letterSpacing: "0.01em",
-              }}
-            >
-              Do solo{" "}
-              <em style={{ color: accent, fontStyle: "normal" }}>À ESTRUTURA.</em>
-            </h1>
-
-            {/* Stats row */}
-            <div
-              style={{
-                display:       "flex",
-                justifyContent:"center",
-                gap:           32,
-                margin:        "24px 0",
-                flexWrap:      "wrap",
-              }}
-            >
-              {[
-                { val: "100%",     label: "na nuvem" },
-                { val: "NBR 6118", label: "norma" },
-                { val: "PDF",      label: "automático" },
-              ].map(({ val, label }) => (
-                <div key={val} style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontFamily:   "'Bebas Neue', sans-serif",
-                      fontSize:      28,
-                      color:         "#ffffff",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {val}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
-                      fontSize:    11,
-                      color:       textDim,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase" as const,
-                    }}
-                  >
-                    {label}
-                  </div>
-                </div>
-              ))}
+              <span style={{ width: 28, height: 1, background: accent, display: "inline-block" }} />
             </div>
 
-            <p
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize:    17,
-                color:       textDim,
-                maxWidth:    480,
-                margin:      "0 auto",
-                lineHeight:  1.6,
-              }}
-            >
+            {/* Title — "Do solo" in Syne 800, "À ESTRUTURA." in Bebas Neue block */}
+            <h1 style={{
+              fontFamily: "var(--font-syne), sans-serif",
+              fontSize: "clamp(52px, 8vw, 100px)", fontWeight: 800,
+              lineHeight: 0.88, letterSpacing: "-0.04em",
+              marginBottom: 28, color: "#ffffff",
+              textShadow: "0 4px 40px rgba(0,0,0,.9), 0 0 80px rgba(0,0,0,.7)",
+            }}>
+              Do solo
+              <em style={{
+                fontFamily: "var(--font-bebas), sans-serif",
+                fontStyle: "normal", color: accent,
+                letterSpacing: "0.04em", fontSize: "1.1em",
+                display: "block", marginTop: 8,
+              }}>
+                À ESTRUTURA.
+              </em>
+            </h1>
+
+            {/* Stats bar — inline like HTML */}
+            <div style={{
+              display: "flex", justifyContent: "center", gap: 32,
+              marginBottom: 28, padding: "16px 32px",
+              background: "rgba(11,13,16,0.7)", borderRadius: 8,
+              flexWrap: "wrap" as const,
+            }}>
+              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
+                <span style={{ color: accent }}>100%</span> na nuvem
+              </span>
+              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
+                <span style={{ color: accent }}>NBR</span> 6118
+              </span>
+              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: "0.02em" }}>
+                <span style={{ color: accent }}>PDF</span> automático
+              </span>
+            </div>
+
+            {/* Description — IBM Plex Mono, white, text-shadow */}
+            <p style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 18, fontWeight: 500, color: "#fff",
+              lineHeight: 1.6, maxWidth: 540, margin: "0 auto",
+              textShadow: "0 2px 30px rgba(0,0,0,1), 0 0 60px rgba(0,0,0,.8)",
+            }}>
               Calcule blocos, estacas e pilares direto no navegador.
               Sem instalação, sem planilha.
             </p>
@@ -739,7 +720,7 @@ export function BridgeHero() {
           <div style={panelStyle}>
             <p
               style={{
-                fontFamily:  "'Syne', sans-serif",
+                fontFamily:  "var(--font-syne), sans-serif",
                 fontSize:    "clamp(22px, 3vw, 32px)",
                 fontWeight:   700,
                 color:        textMain,
@@ -783,7 +764,7 @@ export function BridgeHero() {
             </div>
             <div
               style={{
-                fontFamily:   "'Bebas Neue', sans-serif",
+                fontFamily:   "var(--font-bebas), sans-serif",
                 fontSize:      42,
                 color:         "#ffffff",
                 letterSpacing: "0.04em",
@@ -794,7 +775,7 @@ export function BridgeHero() {
             </div>
             <p
               style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-syne), sans-serif",
                 fontSize:    15,
                 color:       textDim,
                 lineHeight:  1.6,
@@ -841,7 +822,7 @@ export function BridgeHero() {
             </div>
             <div
               style={{
-                fontFamily:   "'Bebas Neue', sans-serif",
+                fontFamily:   "var(--font-bebas), sans-serif",
                 fontSize:      42,
                 color:         "#ffffff",
                 letterSpacing: "0.04em",
@@ -852,7 +833,7 @@ export function BridgeHero() {
             </div>
             <p
               style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-syne), sans-serif",
                 fontSize:    15,
                 color:       textDim,
                 lineHeight:  1.6,
@@ -909,7 +890,7 @@ export function BridgeHero() {
             </div>
             <div
               style={{
-                fontFamily:   "'Bebas Neue', sans-serif",
+                fontFamily:   "var(--font-bebas), sans-serif",
                 fontSize:      42,
                 color:         "#ffffff",
                 letterSpacing: "0.04em",
@@ -920,7 +901,7 @@ export function BridgeHero() {
             </div>
             <p
               style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-syne), sans-serif",
                 fontSize:    15,
                 color:       textDim,
                 lineHeight:  1.6,
@@ -961,7 +942,7 @@ export function BridgeHero() {
           <div style={{ ...panelStyle, textAlign: "center", maxWidth: 480 }}>
             <h2
               style={{
-                fontFamily:   "'Bebas Neue', sans-serif",
+                fontFamily:   "var(--font-bebas), sans-serif",
                 fontSize:     "clamp(38px, 6vw, 58px)",
                 color:         "#ffffff",
                 letterSpacing: "0.02em",
@@ -976,7 +957,7 @@ export function BridgeHero() {
             </h2>
             <p
               style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-syne), sans-serif",
                 fontSize:    15,
                 color:       textDim,
                 lineHeight:  1.6,
@@ -1014,7 +995,7 @@ export function BridgeHero() {
         >
             <span
               style={{
-                fontFamily:    "'IBM Plex Mono', monospace",
+                fontFamily:    "var(--font-mono), monospace",
                 fontSize:       11,
                 letterSpacing: "0.14em",
                 textTransform: "uppercase" as const,

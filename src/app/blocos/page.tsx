@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HeroVisualLazy } from "@/components/hero-visual-lazy";
 
 const APP_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 
@@ -93,34 +94,44 @@ export default function BlocosPage() {
       </header>
 
       <main className="pt-28 pb-20">
-        {/* Hero */}
+        {/* Hero — two columns: text + animation */}
         <section className="max-w-7xl mx-auto px-6 mb-20">
           <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
             Voltar
           </Link>
 
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-1.5 w-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-500" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary/80">Fundações</span>
+          <div className="flex flex-col lg:flex-row gap-10 items-center">
+            {/* Left — text */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-1.5 w-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-500" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary/80">Fundações</span>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
+                BY.BLOCOS
+              </h1>
+              <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-8">
+                Dimensionamento de blocos de coroamento sobre estacas pelo método de bielas e tirantes (STM) tridimensional, conforme NBR 6118:2023.
+              </p>
+
+              <a
+                href={APP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-black transition-all hover:brightness-110 active:scale-[0.97]"
+              >
+                Abrir BY.BLOCOS
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              </a>
+            </div>
+
+            {/* Right — Planta / Corte / 3D animation */}
+            <div className="w-full lg:w-[420px] aspect-square rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
+              <HeroVisualLazy />
+            </div>
           </div>
-
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
-            BY.BLOCOS
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-8">
-            Dimensionamento de blocos de coroamento sobre estacas pelo método de bielas e tirantes (STM) tridimensional, conforme NBR 6118:2023.
-          </p>
-
-          <a
-            href={APP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-black transition-all hover:brightness-110 active:scale-[0.97]"
-          >
-            Abrir BY.BLOCOS
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-          </a>
         </section>
 
         {/* Tipos de bloco */}

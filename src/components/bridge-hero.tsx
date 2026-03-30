@@ -901,9 +901,14 @@ export function BridgeHero() {
                 </li>
               ))}
             </ul>
-            <a href={BLOCOS_URL} style={btnStyle}>
-              Acessar BY.BLOCOS →
-            </a>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, marginTop: 20 }}>
+              <a href={BLOCOS_URL} style={btnStyle}>
+                Acessar BY.BLOCOS →
+              </a>
+              <a href="/blocos" style={{ ...btnStyle, background: "transparent", border: `1px solid rgba(255,138,31,0.35)`, color: "#FF8A1F" }}>
+                Saiba mais
+              </a>
+            </div>
           </div>
         </div>
 
@@ -960,9 +965,14 @@ export function BridgeHero() {
                 </li>
               ))}
             </ul>
-            <a href={GEOTECH_URL} style={btnStyle}>
-              Acessar BY.GEOTECH →
-            </a>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, marginTop: 20 }}>
+              <a href={GEOTECH_URL} style={btnStyle}>
+                Acessar BY.GEOTECH →
+              </a>
+              <a href="/geotech" style={{ ...btnStyle, background: "transparent", border: `1px solid rgba(255,138,31,0.35)`, color: "#FF8A1F" }}>
+                Saiba mais
+              </a>
+            </div>
           </div>
         </div>
 

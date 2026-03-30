@@ -177,6 +177,9 @@ export default function Home() {
         {/* ── Bridge Hero (scroll-driven 3D) ───────────── */}
         <BridgeHero />
 
+        {/* ── Post-scroll content — covers the fixed canvas ── */}
+        <div style={{ position: "relative", zIndex: 20, background: "#0B0D10" }}>
+
         {/* ── Stats Bar ────────────────────────────────── */}
         <div
           className="grid grid-cols-2 md:grid-cols-4"
@@ -872,12 +875,14 @@ export default function Home() {
             </a>
           </div>
         </section>
+
+        </div>{/* end post-scroll wrapper */}
       </main>
 
       {/* ── Footer ─────────────────────────────────────── */}
       <footer
         className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-8 md:gap-12 px-6 md:px-12 pt-12 pb-10 items-start"
-        style={{ borderTop: "1px solid var(--border-landing)" }}
+        style={{ borderTop: "1px solid var(--border-landing)", position: "relative", zIndex: 20, background: "#0B0D10" }}
       >
         {/* Col 1: Brand */}
         <div>

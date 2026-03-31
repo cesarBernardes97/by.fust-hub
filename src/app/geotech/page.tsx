@@ -319,14 +319,6 @@ export default function GeotechPage() {
             >
               Acessar BY.GEOTECH &rarr;
             </a>
-            <a
-              href={`${GEOTECH_URL}/geotech/estacas`}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-secondary"
-            >
-              Ver exemplo de relatório
-            </a>
           </div>
         </div>
 

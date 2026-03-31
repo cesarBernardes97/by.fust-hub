@@ -412,16 +412,15 @@ export function BridgeHero() {
       <div ref={el => { slideRefs.current['s4'] = el; }} className="bh-slide bh-s-mod">
         <div className="bh-mod-tag">Ativo</div>
         <div className="bh-mod-name">BY.BLOCOS</div>
-        <div className="bh-mod-desc">Dimensionamento de blocos de coroamento sobre estacas por bielas e tirantes. Modelo 3D com iso&aacute;rea ponderada que adapta as bielas ao carregamento.</div>
+        <div className="bh-mod-desc">Blocos sobre estacas por bielas e tirantes 3D. Do bloco simples ao poligonal livre com estacas inclinadas.</div>
         <div className="bh-mod-features">
-          <span className="bh-mod-feat">13 tipologias</span>
+          <span className="bh-mod-feat">17 tipologias</span>
           <span className="bh-mod-feat">Modelagem livre</span>
+          <span className="bh-mod-feat">Estacas inclinadas 3D</span>
           <span className="bh-mod-feat">M&uacute;ltiplos pilares</span>
-          <span className="bh-mod-feat">Bielas e tirantes avan&ccedil;ados</span>
-          <span className="bh-mod-feat">Se&ccedil;&otilde;es diversas</span>
-          <span className="bh-mod-feat">Rigidez das estacas</span>
-          <span className="bh-mod-feat">Intera&ccedil;&atilde;o solo-estrutura</span>
-          <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
+          <span className="bh-mod-feat">Se&ccedil;&otilde;es L, C e circular</span>
+          <span className="bh-mod-feat">Bielas e tirantes 3D</span>
+          <span className="bh-mod-feat">Canvas interativo</span>
         </div>
         <a href={BLOCOS_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
         <a href="/blocos" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>

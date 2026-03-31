@@ -71,7 +71,7 @@ const modules = [
     features: ["Flexão oblíqua", "Envoltória resistente", "NBR 6118"],
     status: "coming_soon" as const,
     url: null,
-    page: null,
+    page: "/pilar",
   },
 ];
 
@@ -378,12 +378,23 @@ export default function Home() {
                         )}
                       </>
                     ) : (
-                      <span
-                        className="text-[13px] italic"
-                        style={{ color: "var(--text-muted-landing)", fontWeight: 400 }}
-                      >
-                        Disponível em breve
-                      </span>
+                      <div className="flex items-center gap-4">
+                        <span
+                          className="text-[13px] italic"
+                          style={{ color: "var(--text-muted-landing)", fontWeight: 400 }}
+                        >
+                          Disponível em breve
+                        </span>
+                        {mod.page && (
+                          <a
+                            href={mod.page}
+                            className="text-[13px] font-semibold transition-colors hover:underline"
+                            style={{ color: "var(--text-dim)" }}
+                          >
+                            Saiba mais
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

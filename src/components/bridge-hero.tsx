@@ -398,14 +398,16 @@ export function BridgeHero() {
       <div ref={el => { slideRefs.current['s3'] = el; }} className="bh-slide bh-s-mod">
         <div className="bh-mod-tag bh-soon">Em breve</div>
         <div className="bh-mod-name">BY.PILAR</div>
-        <div className="bh-mod-desc">Dimensionamento de pilares de concreto armado. Flex&atilde;o composta obl&iacute;qua, envolt&oacute;ria resistente, esbeltez e efeitos de 2&ordf; ordem.</div>
+        <div className="bh-mod-desc">Dimensionamento por fibras com flex&atilde;o composta obl&iacute;qua. 2&ordf; ordem pelos dois m&eacute;todos da norma + M&eacute;todo Geral autom&aacute;tico.</div>
         <div className="bh-mod-features">
+          <span className="bh-mod-feat">900 fibras</span>
           <span className="bh-mod-feat">Flex&atilde;o obl&iacute;qua</span>
-          <span className="bh-mod-feat">Envolt&oacute;ria</span>
-          <span className="bh-mod-feat">2&ordf; ordem</span>
-          <span className="bh-mod-feat">NBR 6118</span>
+          <span className="bh-mod-feat">2&ordf; ordem autom&aacute;tica</span>
+          <span className="bh-mod-feat">9 se&ccedil;&otilde;es</span>
+          <span className="bh-mod-feat">M&eacute;todo Geral P-&Delta;</span>
+          <span className="bh-mod-feat">Detalhamento completo</span>
         </div>
-        <span className="bh-mod-cta bh-disabled">Dispon&iacute;vel em breve</span>
+        <a href="/pilar" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F" }}>Saiba mais</a>
       </div>
 
       {/* SLIDE 4: BY.BLOCOS */}

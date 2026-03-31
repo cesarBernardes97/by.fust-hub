@@ -45,14 +45,21 @@ export async function POST() {
       customerId = legacySub?.stripe_customer_id ?? null;
     }
 
+    console.log("[Portal] User:", user.id, "Customer:", customerId);
+
     if (!customerId) {
       return NextResponse.json(
-        { error: "No active subscription found" },
+        { error: "Nenhuma assinatura encontrada para este usuário." },
         { status: 404 },
       );
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error("[Portal] STRIPE_SECRET_KEY is not set");
+      return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://byfust.com.br/painel";
 
     const session = await stripe.billingPortal.sessions.create({
@@ -62,9 +69,10 @@ export async function POST() {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("[Portal] Error:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[Portal] Error:", message);
     return NextResponse.json(
-      { error: "Failed to create portal session" },
+      { error: message },
       { status: 500 },
     );
   }

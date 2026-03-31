@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const BLOCOS_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 const GEOTECH_URL = process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
-const PILAR_URL = process.env.NEXT_PUBLIC_PILAR_URL || "https://by-pilar.vercel.app";
+const PILAR_URL = process.env.NEXT_PUBLIC_PILAR_URL || "https://pilar.byfust.com.br";
 
 // Emails com acesso antecipado ao BY.PILAR (beta testers)
 const PILAR_BETA_EMAILS = [

@@ -128,11 +128,8 @@ export default function PilarPage() {
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
             BY.PILAR
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-4">
-            Dimensionamento de pilares de concreto armado conforme NBR 6118:2023. Método da Curvatura Aproximada, Rigidez kappa e Método Geral com iteração P-Delta — o motor calcula os dois primeiros, compara e adota o mais eficiente.
-          </p>
-          <p className="text-muted-foreground text-base max-w-2xl leading-relaxed mb-8">
-            Para pilares esbeltos (lambda &gt; 90), ativa automaticamente o Método Geral, o mais preciso previsto pela norma.
+          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-8">
+            Dimensionamento de pilares de concreto armado conforme NBR 6118:2023. Flexão composta oblíqua resolvida por fibras, efeitos de 2ª ordem automáticos, detalhamento completo — do esforço à armadura.
           </p>
 
           <span className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-5 py-2.5 text-sm font-semibold text-muted-foreground">

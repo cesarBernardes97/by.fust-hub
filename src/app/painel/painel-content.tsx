@@ -7,6 +7,13 @@ import Link from "next/link";
 
 const BLOCOS_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 const GEOTECH_URL = process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
+const PILAR_URL = process.env.NEXT_PUBLIC_PILAR_URL || "https://by-pilar.vercel.app";
+
+// Emails com acesso antecipado ao BY.PILAR (beta testers)
+const PILAR_BETA_EMAILS = [
+  "cesar.bsilva@bernardesengenharia.com",
+  "cesar.henrique.bernards@gmail.com",
+];
 
 interface ModuleInfo {
   plan_type: string;
@@ -21,32 +28,35 @@ interface Props {
   redemption: { expires_at: string } | null;
 }
 
-const MODULE_CONFIG = [
-  {
-    key: "blocos",
-    name: "BY.BLOCOS",
-    description: "Blocos de coroamento sobre estacas",
-    url: BLOCOS_URL,
-  },
-  {
-    key: "geotech",
-    name: "BY.GEOTECH",
-    description: "Capacidade de carga de estacas",
-    url: GEOTECH_URL,
-  },
-  {
-    key: "vigas",
-    name: "BY.VIGAS",
-    description: "Vigas de concreto armado",
-    url: null,
-  },
-  {
-    key: "pilar",
-    name: "BY.PILAR",
-    description: "Pilares de concreto armado",
-    url: null,
-  },
-];
+function getModuleConfig(userEmail: string) {
+  const isBetaTester = PILAR_BETA_EMAILS.includes(userEmail);
+  return [
+    {
+      key: "blocos",
+      name: "BY.BLOCOS",
+      description: "Blocos de coroamento sobre estacas",
+      url: BLOCOS_URL,
+    },
+    {
+      key: "geotech",
+      name: "BY.GEOTECH",
+      description: "Capacidade de carga de estacas",
+      url: GEOTECH_URL,
+    },
+    {
+      key: "vigas",
+      name: "BY.VIGAS",
+      description: "Vigas de concreto armado",
+      url: null,
+    },
+    {
+      key: "pilar",
+      name: "BY.PILAR",
+      description: "Pilares de concreto armado",
+      url: isBetaTester ? PILAR_URL : null,
+    },
+  ];
+}
 
 export function PainelContent({ user, modules, redemption }: Props) {
   const router = useRouter();
@@ -216,7 +226,7 @@ export function PainelContent({ user, modules, redemption }: Props) {
 
         {/* Module cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {MODULE_CONFIG.map((mod) => {
+          {getModuleConfig(user.email).map((mod) => {
             const sub = modules[mod.key];
             const isPro = sub?.plan_type === "pro" && sub?.status === "active";
             const isAvailable = mod.url !== null;

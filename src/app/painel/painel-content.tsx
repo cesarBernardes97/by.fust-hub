@@ -12,6 +12,7 @@ interface ModuleInfo {
   plan_type: string;
   status: string;
   current_period_end: string | null;
+  has_stripe: boolean;
 }
 
 interface Props {
@@ -102,8 +103,8 @@ export function PainelContent({ user, modules, redemption }: Props) {
     }
   }
 
-  const hasAnySubscription = Object.values(modules).some(
-    (m) => m.plan_type === "pro" && m.status === "active"
+  const hasStripeSubscription = Object.values(modules).some(
+    (m) => m.plan_type === "pro" && m.status === "active" && m.has_stripe
   );
 
   return (
@@ -137,8 +138,8 @@ export function PainelContent({ user, modules, redemption }: Props) {
           </p>
         </div>
 
-        {/* Manage subscription */}
-        {hasAnySubscription && (
+        {/* Manage subscription — only for real Stripe subscribers */}
+        {hasStripeSubscription && (
           <div className="mb-8 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-foreground">Gerenciar assinatura</p>

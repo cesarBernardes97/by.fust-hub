@@ -11,7 +11,7 @@ export default async function PainelPage() {
   const [{ data: modules }, { data: redemption }] = await Promise.all([
     supabase
       .from("module_subscriptions")
-      .select("module, plan_type, status, current_period_end")
+      .select("module, plan_type, status, current_period_end, stripe_subscription_id")
       .eq("user_id", user.id),
     supabase
       .from("coupon_redemptions")
@@ -20,12 +20,13 @@ export default async function PainelPage() {
       .single(),
   ]);
 
-  const moduleMap: Record<string, { plan_type: string; status: string; current_period_end: string | null }> = {};
+  const moduleMap: Record<string, { plan_type: string; status: string; current_period_end: string | null; has_stripe: boolean }> = {};
   for (const mod of modules || []) {
     moduleMap[mod.module] = {
       plan_type: mod.plan_type,
       status: mod.status,
       current_period_end: mod.current_period_end,
+      has_stripe: !!mod.stripe_subscription_id && !mod.stripe_subscription_id.startsWith("owner_"),
     };
   }
 

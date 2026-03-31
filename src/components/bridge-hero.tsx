@@ -403,7 +403,7 @@ export function BridgeHero() {
           <span className="bh-mod-feat">900 fibras</span>
           <span className="bh-mod-feat">Flex&atilde;o obl&iacute;qua</span>
           <span className="bh-mod-feat">2&ordf; ordem autom&aacute;tica</span>
-          <span className="bh-mod-feat">9 se&ccedil;&otilde;es</span>
+          <span className="bh-mod-feat">8 se&ccedil;&otilde;es</span>
           <span className="bh-mod-feat">M&eacute;todo Geral P-&Delta;</span>
           <span className="bh-mod-feat">Detalhamento completo</span>
         </div>

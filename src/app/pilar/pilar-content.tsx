@@ -157,7 +157,7 @@ export function PilarContent() {
         <section className="pl-specs">
           <div className="pl-specs-inner">
             <div className="pl-spec pl-rv"><div className="pl-spec-val">900<span>+</span></div><div className="pl-spec-label">Pontos de fibra por secao</div></div>
-            <div className="pl-spec pl-rv pl-rv-d1"><div className="pl-spec-val">9<span>&times;</span></div><div className="pl-spec-label">Tipologias de secao</div></div>
+            <div className="pl-spec pl-rv pl-rv-d1"><div className="pl-spec-val">8<span>&times;</span></div><div className="pl-spec-label">Tipologias de secao</div></div>
             <div className="pl-spec pl-rv pl-rv-d2"><div className="pl-spec-val">3<span>&times;</span></div><div className="pl-spec-label">Metodos de 2a ordem</div></div>
             <div className="pl-spec pl-rv pl-rv-d3"><div className="pl-spec-val">PDF<span>.</span></div><div className="pl-spec-label">Memoria de calculo completa</div></div>
           </div>
@@ -248,7 +248,7 @@ export function PilarContent() {
         <section className="pl-sections">
           <div className="pl-sections-inner">
             <div className="pl-sec-tag">Secoes calculadas</div>
-            <h2 className="pl-sec-h pl-rv">9 tipologias de secao.</h2>
+            <h2 className="pl-sec-h pl-rv">8 tipologias de secao.</h2>
             <p className="pl-sec-sub pl-rv pl-rv-d1">Cada uma com calculo por fibras e detalhamento automatico.</p>
             <div className="pl-sec-grid">
               {/* Retangular */}
@@ -265,11 +265,6 @@ export function PilarContent() {
               <div className="pl-sec-card pl-rv pl-rv-d2">
                 <svg viewBox="0 0 80 80"><rect x="12" y="12" width="56" height="56" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.3)" strokeWidth="1.5"/><rect x="24" y="24" width="32" height="32" fill="rgba(11,13,16,.9)" stroke="rgba(255,255,255,.2)" strokeWidth="1"/><circle cx="18" cy="18" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="40" cy="18" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="62" cy="18" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="18" cy="62" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="40" cy="62" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="62" cy="62" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="18" cy="40" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="62" cy="40" r="1.8" fill="#FF8A1F" opacity=".6"/></svg>
                 <div className="pl-sec-card-name">Oca Retangular</div><div className="pl-sec-card-sub">Secao vazada</div>
-              </div>
-              {/* Oca Circular */}
-              <div className="pl-sec-card pl-rv">
-                <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.3)" strokeWidth="1.5"/><circle cx="40" cy="40" r="16" fill="rgba(11,13,16,.9)" stroke="rgba(255,255,255,.2)" strokeWidth="1"/><circle cx="40" cy="16" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="40" cy="64" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="16" cy="40" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="64" cy="40" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="23" cy="23" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="57" cy="23" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="23" cy="57" r="1.8" fill="#FF8A1F" opacity=".6"/><circle cx="57" cy="57" r="1.8" fill="#FF8A1F" opacity=".6"/></svg>
-                <div className="pl-sec-card-name">Oca Circular</div><div className="pl-sec-card-sub">Secao vazada</div>
               </div>
               {/* L */}
               <div className="pl-sec-card pl-rv pl-rv-d1">

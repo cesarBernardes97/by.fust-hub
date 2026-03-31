@@ -256,8 +256,6 @@ export function PainelContent({ user, modules, redemption }: Props) {
                   {isAvailable && mod.url ? (
                     <a
                       href={mod.url}
-                      target="_blank"
-                      rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-black transition-all hover:brightness-110 active:scale-[0.97]"
                     >
                       Acessar

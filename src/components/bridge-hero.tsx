@@ -336,7 +336,7 @@ export function BridgeHero() {
         .bh-s-hero .bh-stat span{color:#FF8A1F}
         .bh-s-hero p{font-family:var(--font-mono), monospace;font-size:18px;font-weight:500;color:#fff;line-height:1.6;max-width:540px;margin:0 auto;text-shadow:0 2px 30px rgba(0,0,0,1),0 0 60px rgba(0,0,0,.8)}
 
-        .bh-s-mod{left:50%;top:50%;transform:translate(-50%,-50%) translateY(24px) scale(.97);max-width:620px;width:92%;background:rgba(11,13,16,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:40px 48px;text-align:center;border-top:3px solid #FF8A1F;overflow:hidden}
+        .bh-s-mod{left:50%;top:50%;transform:translate(-50%,-50%) translateY(24px) scale(.97);max-width:620px;width:92%;background:rgba(11,13,16,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:40px 48px;text-align:center;border-top:3px solid #FF8A1F}
         .bh-s-mod.on{transform:translate(-50%,-50%) translateY(0) scale(1)}
         .bh-s-mod .bh-mod-tag{font-family:var(--font-mono), monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#FF8A1F;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
         .bh-s-mod .bh-mod-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.4)}
@@ -371,7 +371,7 @@ export function BridgeHero() {
       `}</style>
 
       <div ref={scrollSpaceRef} style={{ height: "700vh", position: "relative", zIndex: 0 }}>
-        <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1 }} />
+        <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1, pointerEvents: "none" }} />
         <div ref={progressRef} className="bh-progress" style={{ width: "0%" }} />
       </div>
 

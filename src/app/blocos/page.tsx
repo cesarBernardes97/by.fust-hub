@@ -32,14 +32,18 @@ export const metadata: Metadata = {
 };
 
 const blockTypes = [
-  { piles: "1 estaca", shape: "Pontual", desc: "Carga centrada, modelo de contato rígido" },
-  { piles: "2 estacas", shape: "Retangular", desc: "Alinhamento linear" },
-  { piles: "3 estacas", shape: "Linear / Triangular", desc: "Em linha ou triangular com chanfro" },
-  { piles: "4 estacas", shape: "Retangular 2×2", desc: "Configuração mais comum" },
-  { piles: "5 estacas", shape: "Retangular / Trapezoidal / Pentagonal", desc: "2×2+1 central, 2+3, ou pentágono regular" },
-  { piles: "6 estacas", shape: "Retangular 2×3", desc: "Grade retangular" },
-  { piles: "7 estacas", shape: "Trapezoidal 3+4", desc: "Com chanfro trapezoidal" },
-  { piles: "8–9 estacas", shape: "Retangular 3×3", desc: "Grade completa ou sem estaca central" },
+  { piles: "1 estaca", shape: "Pontual", desc: "Carga centrada, bloco sobre estaca única" },
+  { piles: "2 estacas", shape: "Retangular", desc: "Alinhamento em X, bloco alongado" },
+  { piles: "3 estacas", shape: "Linear / Triangular", desc: "Em linha ou contorno hexagonal chanfrado" },
+  { piles: "4 estacas", shape: "Retangular 2×2", desc: "Distribuição nos quatro cantos" },
+  { piles: "5 estacas", shape: "Retangular / Trapezoidal / Pentagonal", desc: "4 cantos + 1 central, 2+3 chanfrado, ou pentágono regular" },
+  { piles: "6 estacas", shape: "Retangular 2×3 / Hexagonal", desc: "Grade retangular ou hexágono regular 6 vértices" },
+  { piles: "7 estacas", shape: "Trapezoidal 3+4 / Hexagonal+1", desc: "Chanfrado ou hexágono regular + 1 central" },
+  { piles: "8 estacas", shape: "Retangular 3×3 / Octagonal", desc: "Sem estaca central ou octágono regular 8 vértices" },
+  { piles: "9 estacas", shape: "Retangular 3×3 / Octagonal+1", desc: "Grade completa ou octágono regular + 1 central" },
+  { piles: "5 estacas", shape: "Pentagonal", desc: "Pentágono regular, 5 vértices" },
+  { piles: "6 estacas", shape: "Pentagonal+1", desc: "Pentágono regular + 1 central" },
+  { piles: "2–20 estacas", shape: "Livre", desc: "Geometria personalizada, posicionamento livre" },
 ];
 
 const capabilities = [
@@ -151,8 +155,8 @@ export default function BlocosPage() {
 
         {/* Tipos de bloco */}
         <section className="max-w-7xl mx-auto px-6 mb-20">
-          <h2 className="text-2xl font-black tracking-tight mb-2">13 tipos de bloco</h2>
-          <p className="text-muted-foreground text-sm mb-8">De 1 a 9 estacas, em configurações retangulares, triangulares, trapezoidais e pentagonais.</p>
+          <h2 className="text-2xl font-black tracking-tight mb-2">17 tipologias de bloco</h2>
+          <p className="text-muted-foreground text-sm mb-8">De 1 a 20 estacas — retangulares, triangulares, trapezoidais, pentagonais, hexagonais, octagonais e geometria livre.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {blockTypes.map((bt) => (

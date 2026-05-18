@@ -55,6 +55,28 @@ export async function signup(formData: FormData) {
   return {};
 }
 
+export async function resetPassword(formData: FormData) {
+  const supabase = await createClient();
+  const email = formData.get("email") as string;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://byfust.com.br"}/redefinir-senha`,
+  });
+
+  if (error) return { error: translateAuthError(error.message) };
+  return {};
+}
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient();
+  const password = formData.get("password") as string;
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) return { error: translateAuthError(error.message) };
+  return {};
+}
+
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();

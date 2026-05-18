@@ -148,12 +148,21 @@ export function AuthForm({ type }: AuthFormProps) {
         </button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-muted-foreground">
-        {isLogin ? (
-          <>Não tem conta? <Link href="/cadastro" className="text-primary hover:underline font-medium">Cadastre-se</Link></>
-        ) : (
-          <>Já tem conta? <Link href="/login" className="text-primary hover:underline font-medium">Fazer login</Link></>
+      <div className="mt-6 text-center text-sm text-muted-foreground space-y-2">
+        {isLogin && (
+          <div>
+            <Link href="/recuperar-senha" className="text-muted-foreground hover:text-foreground hover:underline text-xs transition-colors">
+              Esqueci minha senha
+            </Link>
+          </div>
         )}
+        <div>
+          {isLogin ? (
+            <>Não tem conta? <Link href="/cadastro" className="text-primary hover:underline font-medium">Cadastre-se</Link></>
+          ) : (
+            <>Já tem conta? <Link href="/login" className="text-primary hover:underline font-medium">Fazer login</Link></>
+          )}
+        </div>
       </div>
     </div>
   );

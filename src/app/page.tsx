@@ -73,6 +73,20 @@ const modules = [
     url: null,
     page: "/pilar",
   },
+  {
+    name: "BY.LINHA",
+    tag: "Segurança",
+    description: "Dimensionamento de linhas de vida horizontais.",
+    features: [
+      "Cabos de aço",
+      "Fator de queda",
+      "ZLQ automático",
+      "Catálogo de cabos",
+    ],
+    status: "coming_soon" as const,
+    url: null,
+    page: null,
+  },
 ];
 
 const stats = [
@@ -899,6 +913,13 @@ export default function Home() {
               style={{ color: "var(--text-dim)" }}
             >
               BY.PILAR
+            </a>
+            <a
+              href="#"
+              className="text-[13px] transition-colors"
+              style={{ color: "var(--text-dim)" }}
+            >
+              BY.LINHA
             </a>
             <a
               href="#suporte"

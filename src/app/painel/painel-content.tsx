@@ -8,9 +8,11 @@ import Link from "next/link";
 const BLOCOS_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 const GEOTECH_URL = process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
 const PILAR_URL = process.env.NEXT_PUBLIC_PILAR_URL || "https://pilar.byfust.com.br";
+const VIGAS_URL = process.env.NEXT_PUBLIC_VIGAS_URL || "https://by-vigas.vercel.app";
+const LINHA_URL = process.env.NEXT_PUBLIC_LINHA_URL || "https://linha.byfust.com.br";
 
-// Emails com acesso antecipado ao BY.PILAR (beta testers)
-const PILAR_BETA_EMAILS = [
+// Emails com acesso antecipado (beta testers)
+const BETA_EMAILS = [
   "cesar.bsilva@bernardesengenharia.com",
   "cesar.henrique.bernards@gmail.com",
 ];
@@ -29,7 +31,7 @@ interface Props {
 }
 
 function getModuleConfig(userEmail: string) {
-  const isBetaTester = PILAR_BETA_EMAILS.includes(userEmail);
+  const isBetaTester = BETA_EMAILS.includes(userEmail);
   return [
     {
       key: "blocos",
@@ -47,13 +49,19 @@ function getModuleConfig(userEmail: string) {
       key: "vigas",
       name: "BY.VIGAS",
       description: "Vigas de concreto armado",
-      url: null,
+      url: isBetaTester ? VIGAS_URL : null,
     },
     {
       key: "pilar",
       name: "BY.PILAR",
       description: "Pilares de concreto armado",
       url: isBetaTester ? PILAR_URL : null,
+    },
+    {
+      key: "linha",
+      name: "BY.LINHA",
+      description: "Linhas de vida horizontais",
+      url: isBetaTester ? LINHA_URL : null,
     },
   ];
 }

@@ -424,8 +424,10 @@ export function BridgeHero() {
           <span className="bh-mod-feat">Bielas e tirantes 3D</span>
           <span className="bh-mod-feat">Canvas interativo</span>
         </div>
-        <a href={BLOCOS_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
-        <a href="/blocos" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href={BLOCOS_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.BLOCOS &rarr;</a>
+          <a href="/blocos" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F" }}>Saiba mais</a>
+        </div>
       </div>
 
       {/* SLIDE 5: BY.GEOTECH */}
@@ -440,8 +442,10 @@ export function BridgeHero() {
           <span className="bh-mod-feat">12 tipos de estaca</span>
           <span className="bh-mod-feat">Relat&oacute;rio PDF</span>
         </div>
-        <a href={GEOTECH_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.GEOTECH &rarr;</a>
-        <a href="/geotech" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F", marginLeft: 8 }}>Saiba mais</a>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href={GEOTECH_URL} target="_blank" rel="noreferrer" className="bh-mod-cta">Acessar BY.GEOTECH &rarr;</a>
+          <a href="/geotech" className="bh-mod-cta" style={{ background: "transparent", border: "1px solid rgba(255,138,31,.3)", color: "#FF8A1F" }}>Saiba mais</a>
+        </div>
       </div>
 
       {/* SLIDE 6: CTA */}

@@ -7,7 +7,7 @@ const GEOTECH_URL =
   process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
 
 export const metadata: Metadata = {
-  title: "BY.GEOTECH — Capacidade de Carga de Estacas | BY.FUST",
+  title: "BY.GEOTECH: Capacidade de Carga de Estacas | BY.FUST",
   description:
     "Calcule capacidade de carga vertical e horizontal de estacas isoladas. Métodos Aoki-Velloso, Décourt-Quaresma, análise lateral P-Y por diferenças finitas e relatório PDF automático.",
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "cálculo geotécnico",
   ],
   openGraph: {
-    title: "BY.GEOTECH — Capacidade de Carga de Estacas",
+    title: "BY.GEOTECH: Capacidade de Carga de Estacas",
     description:
       "Análise geotécnica de estacas com Aoki-Velloso, Décourt-Quaresma e análise lateral P-Y. Relatório PDF automático.",
     url: "https://byfust.com.br/geotech",
@@ -90,13 +90,13 @@ const estacas = [
 ];
 
 const soilLayers = [
-  { depth: "0–2m", name: "Aterro", color: "#c9a96e", nspt: "3", nsptColor: "var(--text-muted-landing)" },
-  { depth: "2–5m", name: "Argila mole", color: "#8b7355", nspt: "5", nsptColor: "#f5820d" },
-  { depth: "5–9m", name: "Areia fina", color: "#d4a854", nspt: "12", nsptColor: "#f5820d" },
-  { depth: "9–13m", name: "Argila rija", color: "#7a6b52", nspt: "18", nsptColor: "#ff9b2e" },
-  { depth: "13–16m", name: "Areia média", color: "#c4a64f", nspt: "25", nsptColor: "#ff9b2e" },
-  { depth: "16–18m", name: "Silte arenoso", color: "#a09070", nspt: "32", nsptColor: "#22c55e" },
-  { depth: "18–20m", name: "Areia grossa", color: "#9a8855", nspt: "40+", nsptColor: "#22c55e" },
+  { depth: "0-2 m", name: "Aterro", color: "#c9a96e", nspt: "3", nsptColor: "var(--text-muted-landing)" },
+  { depth: "2-5 m", name: "Argila mole", color: "#8b7355", nspt: "5", nsptColor: "#f5820d" },
+  { depth: "5-9 m", name: "Areia fina", color: "#d4a854", nspt: "12", nsptColor: "#f5820d" },
+  { depth: "9-13 m", name: "Argila rija", color: "#7a6b52", nspt: "18", nsptColor: "#ff9b2e" },
+  { depth: "13-16 m", name: "Areia média", color: "#c4a64f", nspt: "25", nsptColor: "#ff9b2e" },
+  { depth: "16-18 m", name: "Silte arenoso", color: "#a09070", nspt: "32", nsptColor: "#22c55e" },
+  { depth: "18-20 m", name: "Areia grossa", color: "#9a8855", nspt: "40+", nsptColor: "#22c55e" },
 ];
 
 const bottomChecks = [

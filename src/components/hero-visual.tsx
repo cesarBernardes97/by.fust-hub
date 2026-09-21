@@ -214,7 +214,7 @@ export function HeroVisual() {
       ctx!.fillText(momentDesc, S * 0.94, S * 0.085);
       ctx!.font = "400 " + S * 0.013 + 'px "IBM Plex Mono", monospace';
       ctx!.fillStyle = "rgba(255,255,255,0.15)";
-      ctx!.fillText("Voronoi ponderado — topo do pilar", S * 0.94, S * 0.11);
+      ctx!.fillText("Voronoi ponderado: topo do pilar", S * 0.94, S * 0.11);
       ctx!.textAlign = "center";
       ctx!.font = "600 " + S * 0.018 + 'px "IBM Plex Mono", monospace';
       ctx!.fillStyle = "rgba(255,255,255,0.15)";

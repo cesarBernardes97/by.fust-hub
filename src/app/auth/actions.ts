@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+import { getHubSiteUrl } from "@/utils/supabase/cookieDomain";
+import { RETURN_PARAM, resolveReturnUrl } from "@/lib/returnUrl";
 
 function translateAuthError(message: string): string {
   if (!message) return "Ocorreu um erro desconhecido.";
@@ -38,10 +40,23 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = await createClient();
 
+  /*
+   * Destino de volta depois da confirmacao do e-mail (M-18). Quem chega de um
+   * modulo vem com `?next=...`; sem isto, quem se cadastrava a partir do
+   * radier confirmava o e-mail e caia no hub sem porta de volta. O valor passa
+   * pelo mesmo resolveReturnUrl do login, e o /auth/callback valida de novo.
+   */
+  const destino = resolveReturnUrl(formData.get(RETURN_PARAM) as string | null, "");
+  const callback = `${getHubSiteUrl()}/auth/callback`;
+  const emailRedirectTo = destino
+    ? `${callback}?${RETURN_PARAM}=${encodeURIComponent(destino)}`
+    : callback;
+
   const { error } = await supabase.auth.signUp({
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     options: {
+      emailRedirectTo,
       data: {
         full_name: formData.get("fullName") as string,
         phone: formData.get("phone") as string,
@@ -60,7 +75,7 @@ export async function resetPassword(formData: FormData) {
   const email = formData.get("email") as string;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://byfust.com.br"}/redefinir-senha`,
+    redirectTo: `${getHubSiteUrl()}/redefinir-senha`,
   });
 
   if (error) return { error: translateAuthError(error.message) };

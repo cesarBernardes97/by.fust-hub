@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PilarContent } from "./pilar-content";
 
 export const metadata: Metadata = {
-  title: "BY.PILAR — Dimensionamento de Pilares de Concreto Armado | BY.FUST",
+  title: "BY.PILAR: Dimensionamento de Pilares de Concreto Armado | BY.FUST",
   description:
     "Dimensione pilares de concreto armado com flexão composta oblíqua por fibras, efeitos de 2ª ordem automáticos e detalhamento completo. NBR 6118:2023.",
   keywords: [
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "rigidez kappa",
   ],
   openGraph: {
-    title: "BY.PILAR — Dimensionamento de Pilares de Concreto Armado",
+    title: "BY.PILAR: Dimensionamento de Pilares de Concreto Armado",
     description:
       "Flexão oblíqua por fibras, 2ª ordem automática, 9 seções, detalhamento completo. NBR 6118:2023.",
     url: "https://byfust.com.br/pilar",

@@ -5,6 +5,8 @@ const BLOCOS_URL =
   process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 const GEOTECH_URL =
   process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfust.com.br";
+const RADIER_URL =
+  process.env.NEXT_PUBLIC_RADIER_URL || "https://radier.byfust.com.br";
 const WHATSAPP_URL = "https://wa.me/5500000000000";
 const INSTAGRAM_URL = "#";
 const LINKEDIN_URL = "#";
@@ -85,6 +87,21 @@ const modules = [
     ],
     status: "coming_soon" as const,
     url: null,
+    page: null,
+  },
+  {
+    name: "BY.RADIER",
+    tag: "Fundações",
+    description:
+      "Verificação de radier estaqueado de tanque: base circular sobre estacas em anéis.",
+    features: [
+      "Tanque sobre radier estaqueado",
+      "Estacas em anéis",
+      "Verificação as-built por estaca",
+      "Parecer técnico e exportação",
+    ],
+    status: "beta" as const,
+    url: RADIER_URL,
     page: null,
   },
 ];
@@ -191,7 +208,7 @@ export default function Home() {
         {/* ── Bridge Hero (scroll-driven 3D) ───────────── */}
         <BridgeHero />
 
-        {/* ── Post-scroll content — covers the fixed canvas ── */}
+        {/* Post-scroll content: covers the fixed canvas */}
         <div style={{ position: "relative", zIndex: 20, background: "#0B0D10" }}>
 
         {/* ── Stats Bar ────────────────────────────────── */}
@@ -300,17 +317,20 @@ export default function Home() {
           >
             {modules.map((mod) => {
               const isActive = mod.status === "active";
+              // Beta fechado: o modulo ja existe e abre, mas ainda nao vende.
+              const isBeta = mod.status === "beta";
+              const isLive = isActive || isBeta;
               return (
                 <div
                   key={mod.name}
-                  className={`module-card p-8 md:p-10 ${!isActive ? "coming-soon" : ""}`}
+                  className={`module-card p-8 md:p-10 ${!isLive ? "coming-soon" : ""}`}
                   style={{ background: "var(--bg)" }}
                 >
                   {/* Top row: name + status */}
                   <div className="flex items-start justify-between mb-1 relative">
                     <h3
                       className="text-[28px] md:text-[32px] font-black tracking-tight"
-                      style={{ color: isActive ? "var(--text)" : "var(--text-dim)", lineHeight: 1.1 }}
+                      style={{ color: isLive ? "var(--text)" : "var(--text-dim)", lineHeight: 1.1 }}
                     >
                       {mod.name}
                     </h3>
@@ -324,6 +344,17 @@ export default function Home() {
                           style={{ background: "var(--green-landing)", boxShadow: "0 0 8px rgba(34,197,94,0.4)" }}
                         />
                         Ativo
+                      </span>
+                    ) : isBeta ? (
+                      <span
+                        className="text-[10px] font-bold uppercase flex items-center gap-1.5 mt-1.5 shrink-0"
+                        style={{ letterSpacing: "0.08em", color: "var(--accent-landing)" }}
+                      >
+                        <span
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ background: "var(--accent-landing)", boxShadow: "0 0 8px var(--accent-glow)" }}
+                        />
+                        Beta fechado
                       </span>
                     ) : (
                       <span
@@ -351,12 +382,12 @@ export default function Home() {
                           className="w-4 h-4 mt-0.5 shrink-0"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke={isActive ? "var(--accent-landing)" : "var(--text-muted-landing)"}
+                          stroke={isLive ? "var(--accent-landing)" : "var(--text-muted-landing)"}
                           strokeWidth={2.5}
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span className="text-[13px]" style={{ color: isActive ? "var(--text-dim)" : "var(--text-muted-landing)" }}>
+                        <span className="text-[13px]" style={{ color: isLive ? "var(--text-dim)" : "var(--text-muted-landing)" }}>
                           {feat}
                         </span>
                       </li>
@@ -370,7 +401,7 @@ export default function Home() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-4 relative">
-                    {isActive && mod.url ? (
+                    {isLive && mod.url ? (
                       <>
                         <a
                           href={mod.url}
@@ -621,7 +652,7 @@ export default function Home() {
                     style={{ color: "var(--text-dim)" }}
                   >
                     <span style={{ color: i === 2 ? "var(--text-muted-landing)" : "var(--accent-landing)" }}>
-                      {i === 2 ? "—" : "✓"}
+                      {i === 2 ? "✕" : "✓"}
                     </span>
                     {f}
                   </li>
@@ -695,7 +726,7 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Combo — DESTAQUE */}
+            {/* Combo: DESTAQUE */}
             <div
               className="rounded-xl p-8 flex flex-col relative"
               style={{
@@ -841,7 +872,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA removido — já aparece no slide s6 do BridgeHero */}
+        {/* CTA removido: ja aparece no slide s6 do BridgeHero */}
 
         </div>{/* end post-scroll wrapper */}
       </main>
@@ -920,6 +951,15 @@ export default function Home() {
               style={{ color: "var(--text-dim)" }}
             >
               BY.LINHA
+            </a>
+            <a
+              href={RADIER_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[13px] transition-colors"
+              style={{ color: "var(--text-dim)" }}
+            >
+              BY.RADIER
             </a>
             <a
               href="#suporte"
@@ -1034,7 +1074,7 @@ export default function Home() {
             color: "var(--text-muted-landing)",
           }}
         >
-          <span>&copy; 2025 BY.FUST — Todos os direitos reservados.</span>
+          <span>&copy; 2025 BY.FUST. Todos os direitos reservados.</span>
           <div className="flex gap-3">
             <a
               href={INSTAGRAM_URL}

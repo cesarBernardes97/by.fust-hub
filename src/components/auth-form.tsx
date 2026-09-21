@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login, signup } from "@/app/auth/actions";
+import { RETURN_PARAM, returnUrlFromSearch } from "@/lib/returnUrl";
 import Link from "next/link";
 
 interface AuthFormProps {
@@ -17,6 +18,26 @@ export function AuthForm({ type }: AuthFormProps) {
   const [success, setSuccess] = useState<string | null>(null);
 
   const isLogin = type === "login";
+
+  /*
+   * Destino de volta (M-18). Quem chega de um modulo vem com `?next=...`, e o
+   * destino se perdia em tudo que nao era o login bem sucedido: os links
+   * "Cadastre-se" e "Esqueci minha senha" eram fixos, e o cadastro nao
+   * guardava o destino em lugar nenhum. Como o radier manda todo usuario sem
+   * conta para `${hub}/login?next=...`, esse e o caminho do primeiro acesso de
+   * qualquer beta tester.
+   *
+   * Lido no efeito, e nao no render, para o HTML do servidor bater com o do
+   * cliente (a query so existe no navegador).
+   */
+  const [destino, setDestino] = useState<string | null>(null);
+  useEffect(() => {
+    const valido = returnUrlFromSearch(window.location.search, "");
+    setDestino(valido || null);
+  }, []);
+
+  const comDestino = (caminho: string): string =>
+    destino ? `${caminho}?${RETURN_PARAM}=${encodeURIComponent(destino)}` : caminho;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,11 +64,16 @@ export function AuthForm({ type }: AuthFormProps) {
       } else {
         setSuccess(isLogin ? "Login realizado." : "Conta criada! Verifique seu e-mail.");
         if (isLogin) {
-          // Hard redirect to avoid router.push conflicts with revalidatePath
-          window.location.href = "/painel";
+          /*
+           * Volta para onde o usuario estava (auditoria M-18): quem chega de
+           * um modulo vem com `?next=<destino>`, validado contra o dominio
+           * byfust.com.br. Sem destino, ou com destino de fora, vai ao painel.
+           * Redirect duro de proposito, para nao brigar com o revalidatePath.
+           */
+          window.location.href = returnUrlFromSearch(window.location.search);
         } else {
           setLoading(false);
-          // Stay on page — user needs to verify email
+          // Stay on page: user needs to verify email
         }
       }
     } catch {
@@ -70,6 +96,8 @@ export function AuthForm({ type }: AuthFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {!isLogin && (
           <>
+            {/* O e-mail de confirmacao volta para este destino (M-18). */}
+            <input type="hidden" name={RETURN_PARAM} value={destino ?? ""} />
             <div>
               <label htmlFor="fullName" className="text-xs text-muted-foreground block mb-1">Nome completo</label>
               <input
@@ -151,16 +179,16 @@ export function AuthForm({ type }: AuthFormProps) {
       <div className="mt-6 text-center text-sm text-muted-foreground space-y-2">
         {isLogin && (
           <div>
-            <Link href="/recuperar-senha" className="text-muted-foreground hover:text-foreground hover:underline text-xs transition-colors">
+            <Link href={comDestino("/recuperar-senha")} className="text-muted-foreground hover:text-foreground hover:underline text-xs transition-colors">
               Esqueci minha senha
             </Link>
           </div>
         )}
         <div>
           {isLogin ? (
-            <>Não tem conta? <Link href="/cadastro" className="text-primary hover:underline font-medium">Cadastre-se</Link></>
+            <>Não tem conta? <Link href={comDestino("/cadastro")} className="text-primary hover:underline font-medium">Cadastre-se</Link></>
           ) : (
-            <>Já tem conta? <Link href="/login" className="text-primary hover:underline font-medium">Fazer login</Link></>
+            <>Já tem conta? <Link href={comDestino("/login")} className="text-primary hover:underline font-medium">Fazer login</Link></>
           )}
         </div>
       </div>

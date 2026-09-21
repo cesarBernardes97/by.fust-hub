@@ -4,33 +4,82 @@ import {
   upsertModuleSubscription,
   getUserByStripeCustomer,
   findUserByEmail,
-  ALL_MODULES,
+  isStripeEventStale,
+  moduleFromSubscription,
+  modulesToPersist,
+  type ModuleSubscriptionRow,
 } from "@/lib/subscription";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 export const runtime = "nodejs";
 
+/** Um id de usuario do Supabase e sempre um UUID. */
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+type CamposDaLinha = Partial<Omit<ModuleSubscriptionRow, "user_id" | "module">>;
+
+interface ContextoDaAssinatura {
+  /** Modulo resolvido, ou null quando nao da para saber (nada e gravado). */
+  module: string | null;
+  /** A assinatura como o Stripe a devolve agora. */
+  sub: Stripe.Subscription;
+}
+
 /**
- * Resolve which module a Stripe product/price is for.
- * Uses product metadata `module: "blocos" | "geotech" | "all"`.
- * Falls back to "blocos" for backwards compat with existing subscriptions.
+ * De que modulo e a assinatura, pela metadata do produto (ver
+ * `moduleFromSubscription`), e a propria assinatura buscada.
+ *
+ * SEM try/catch de proposito (I-04). Antes o catch devolvia null, e null cai
+ * no mesmo ramo de "modulo desconhecido": console.warn, break e 200. Com 200 o
+ * Stripe nao reenvia, entao um 429 ou um timeout no retrieve fazia um checkout
+ * pago nao liberar nada, de forma permanente e silenciosa. Deixando a excecao
+ * subir, o handler responde 500 e o Stripe reenvia. Null continua querendo
+ * dizer so "modulo desconhecido".
  */
-async function resolveModule(stripe: Stripe, subscriptionId: string): Promise<string> {
-  try {
-    const sub = await stripe.subscriptions.retrieve(subscriptionId, {
-      expand: ["items.data.price.product"],
-    });
-    const item = sub.items.data[0];
-    const product = item?.price?.product;
-    if (product && typeof product === "object" && "metadata" in product) {
-      const mod = (product as Stripe.Product).metadata?.module;
-      if (mod) return mod;
-    }
-  } catch (err) {
-    console.warn("[Webhook] Could not resolve module from subscription:", err);
+async function resolverContexto(
+  stripe: Stripe,
+  subscriptionId: string,
+): Promise<ContextoDaAssinatura> {
+  const sub = await stripe.subscriptions.retrieve(subscriptionId, {
+    expand: ["items.data.price.product"],
+  });
+  return { module: moduleFromSubscription(sub), sub };
+}
+
+/**
+ * Fim do periodo pago. A partir da API de 2025 o campo vive no item da
+ * assinatura; ler so o topo gravava sempre nulo e o painel nao mostrava
+ * a data de renovacao.
+ */
+function periodEndISO(sub: Stripe.Subscription): string | null {
+  const item = sub.items?.data?.[0] as unknown as Record<string, unknown> | undefined;
+  const topo = sub as unknown as Record<string, unknown>;
+  const valor = item?.current_period_end ?? topo.current_period_end;
+  return typeof valor === "number" ? new Date(valor * 1000).toISOString() : null;
+}
+
+/**
+ * Grava a linha do modulo, pulando evento mais antigo que o ultimo gravado
+ * (I-03). O Stripe reenvia e entrega fora de ordem: um `deleted` ja
+ * processado pode ser seguido de um `updated` atrasado com status active, e
+ * sem esta guarda o upsert devolvia o acesso a quem cancelou.
+ */
+async function gravarModulo(
+  userId: string,
+  module: string,
+  fields: CamposDaLinha,
+  eventCreated: number,
+): Promise<boolean> {
+  if (await isStripeEventStale(userId, module, eventCreated)) {
+    console.info("[Webhook] evento fora de ordem ignorado:", module, userId, eventCreated);
+    return false;
   }
-  return "blocos"; // fallback
+  await upsertModuleSubscription(userId, module, {
+    ...fields,
+    stripe_event_created: eventCreated,
+  });
+  return true;
 }
 
 export async function POST(req: NextRequest) {
@@ -61,10 +110,15 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log("[Webhook] Checkout for:", session.customer_email);
 
-        // Find user: metadata first, then email lookup
+        // Acha o usuario: metadata, client_reference_id e, por fim, e-mail
         let userId = session.metadata?.supabase_user_id;
-        if (!userId && session.customer_email) {
-          userId = await findUserByEmail(session.customer_email);
+        const referencia = session.client_reference_id;
+        if (!userId && referencia && UUID.test(referencia)) {
+          userId = referencia;
+        }
+        const email = session.customer_email ?? session.customer_details?.email ?? null;
+        if (!userId && email) {
+          userId = await findUserByEmail(email);
         }
 
         if (!userId) {
@@ -77,46 +131,85 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        const module = await resolveModule(stripe, session.subscription as string);
-        const modules = module === "all" ? [...ALL_MODULES] : [module];
+        const ctx = await resolverContexto(stripe, session.subscription as string);
+        const modules = modulesToPersist(ctx.module);
 
-        for (const mod of modules) {
-          await upsertModuleSubscription(userId, mod, {
-            plan_type: "pro",
-            status: "active",
-            stripe_customer_id: session.customer as string,
-            stripe_subscription_id: session.subscription as string,
-          });
+        if (modules.length === 0) {
+          console.warn(
+            "[Webhook] Nada gravado: modulo",
+            ctx.module ?? "desconhecido",
+            "no evento",
+            event.type,
+            session.id,
+          );
+          break;
         }
 
-        // Also upsert to legacy subscriptions table for backwards compat
+        for (const mod of modules) {
+          await gravarModulo(
+            userId,
+            mod,
+            {
+              plan_type: "pro",
+              status: "active",
+              stripe_customer_id: session.customer as string,
+              stripe_subscription_id: session.subscription as string,
+              // A assinatura ja foi buscada acima: sem isto a coluna ficava
+              // nula ate chegar algum `updated` futuro, e o card do painel nao
+              // mostrava a data de renovacao de quem acabou de pagar.
+              current_period_end: periodEndISO(ctx.sub),
+            },
+            event.created,
+          );
+        }
+
         console.log("[Webhook] Activated modules:", modules, "for user:", userId);
         break;
       }
 
+      // `created` chega logo depois da compra e traz o mesmo objeto do
+      // `updated`: sem este case, a primeira assinatura so era completada no
+      // proximo evento de atualizacao.
+      case "customer.subscription.created":
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
         const customerId = sub.customer as string;
         const userId = await getUserByStripeCustomer(customerId);
         if (!userId) break;
 
-        const module = await resolveModule(stripe, sub.id);
-        const modules = module === "all" ? [...ALL_MODULES] : [module];
-        const isActive = sub.status === "active" || sub.status === "trialing";
-        const periodEnd = (sub as unknown as Record<string, unknown>).current_period_end;
+        const ctx = await resolverContexto(stripe, sub.id);
+        const modules = modulesToPersist(ctx.module);
 
-        for (const mod of modules) {
-          await upsertModuleSubscription(userId, mod, {
-            plan_type: isActive ? "pro" : "free",
-            status: sub.status,
-            stripe_subscription_id: sub.id,
-            current_period_end: typeof periodEnd === "number"
-              ? new Date(periodEnd * 1000).toISOString()
-              : null,
-          });
+        if (modules.length === 0) {
+          console.warn(
+            "[Webhook] Nada gravado: modulo",
+            ctx.module ?? "desconhecido",
+            "no evento",
+            event.type,
+            sub.id,
+          );
+          break;
         }
 
-        console.log("[Webhook] Updated modules:", modules, "status:", sub.status);
+        const atual = ctx.sub;
+        const isActive = atual.status === "active" || atual.status === "trialing";
+
+        for (const mod of modules) {
+          await gravarModulo(
+            userId,
+            mod,
+            {
+              plan_type: isActive ? "pro" : "free",
+              status: atual.status,
+              stripe_customer_id: customerId,
+              stripe_subscription_id: atual.id,
+              current_period_end: periodEndISO(atual),
+            },
+            event.created,
+          );
+        }
+
+        console.log("[Webhook] Updated modules:", modules, "status:", atual.status);
         break;
       }
 
@@ -126,16 +219,32 @@ export async function POST(req: NextRequest) {
         const userId = await getUserByStripeCustomer(customerId);
         if (!userId) break;
 
-        const module = await resolveModule(stripe, sub.id);
-        const modules = module === "all" ? [...ALL_MODULES] : [module];
+        const ctx = await resolverContexto(stripe, sub.id);
+        const modules = modulesToPersist(ctx.module);
+
+        if (modules.length === 0) {
+          console.warn(
+            "[Webhook] Nada cancelado: modulo",
+            ctx.module ?? "desconhecido",
+            "no evento",
+            event.type,
+            sub.id,
+          );
+          break;
+        }
 
         for (const mod of modules) {
-          await upsertModuleSubscription(userId, mod, {
-            plan_type: "free",
-            status: "canceled",
-            stripe_subscription_id: null,
-            current_period_end: null,
-          });
+          await gravarModulo(
+            userId,
+            mod,
+            {
+              plan_type: "free",
+              status: "canceled",
+              stripe_subscription_id: null,
+              current_period_end: null,
+            },
+            event.created,
+          );
         }
 
         console.log("[Webhook] Canceled modules:", modules, "for user:", userId);

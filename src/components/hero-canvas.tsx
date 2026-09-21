@@ -94,7 +94,7 @@ export function HeroCanvas() {
         ctx.lineTo(down.x, down.y);
         ctx.stroke();
       }
-      // diagonal bracing — structural feel (every other cell)
+      // diagonal bracing: structural feel (every other cell)
       if (diagDR && (node.col + node.row) % 3 === 0) {
         ctx.strokeStyle = `rgba(255,255,255,${LINE_ALPHA * 0.5})`;
         ctx.beginPath();

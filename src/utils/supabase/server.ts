@@ -1,7 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-
-const COOKIE_DOMAIN = process.env.NODE_ENV === "production" ? ".byfust.com.br" : undefined;
+import { COOKIE_DOMAIN } from "./cookieDomain";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -23,7 +22,7 @@ export async function createClient() {
               }),
             );
           } catch {
-            // Called from a Server Component — middleware handles refresh.
+            // Called from a Server Component: middleware handles refresh.
           }
         },
       },

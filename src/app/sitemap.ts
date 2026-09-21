@@ -24,6 +24,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/pilar`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    // BY.RADIER entra aqui quando /radier existir: sitemap com rota 404 e pior
+    // do que sitemap sem a rota.
+    {
       url: `${baseUrl}/login`,
       lastModified: now,
       changeFrequency: "yearly",

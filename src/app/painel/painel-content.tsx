@@ -10,6 +10,7 @@ const GEOTECH_URL = process.env.NEXT_PUBLIC_GEOTECH_URL || "https://geotech.byfu
 const PILAR_URL = process.env.NEXT_PUBLIC_PILAR_URL || "https://pilar.byfust.com.br";
 const VIGAS_URL = process.env.NEXT_PUBLIC_VIGAS_URL || "https://by-vigas.vercel.app";
 const LINHA_URL = process.env.NEXT_PUBLIC_LINHA_URL || "https://linha.byfust.com.br";
+const RADIER_URL = process.env.NEXT_PUBLIC_RADIER_URL || "https://radier.byfust.com.br";
 
 // Emails com acesso antecipado (beta testers)
 const BETA_EMAILS = [
@@ -30,7 +31,16 @@ interface Props {
   redemption: { expires_at: string } | null;
 }
 
-function getModuleConfig(userEmail: string) {
+interface ModuleCard {
+  key: string;
+  name: string;
+  description: string;
+  url: string | null;
+  /** Beta fechado: acesso por cortesia, sem checkout. */
+  beta?: boolean;
+}
+
+function getModuleConfig(userEmail: string): ModuleCard[] {
   const isBetaTester = BETA_EMAILS.includes(userEmail);
   return [
     {
@@ -62,6 +72,13 @@ function getModuleConfig(userEmail: string) {
       name: "BY.LINHA",
       description: "Linhas de vida horizontais",
       url: isBetaTester ? LINHA_URL : null,
+    },
+    {
+      key: "radier",
+      name: "BY.RADIER",
+      description: "Radier estaqueado de tanque",
+      url: isBetaTester ? RADIER_URL : null,
+      beta: true,
     },
   ];
 }
@@ -156,7 +173,7 @@ export function PainelContent({ user, modules, redemption }: Props) {
           </p>
         </div>
 
-        {/* Manage subscription — only for real Stripe subscribers */}
+        {/* Manage subscription: only for real Stripe subscribers */}
         {hasStripeSubscription && (
           <div className="mb-8 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
             <div>
@@ -177,7 +194,7 @@ export function PainelContent({ user, modules, redemption }: Props) {
           <div className="mb-8 p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-4 flex-wrap">
             <div>
               <p className="text-sm font-semibold text-foreground">
-                Acesso de teste ativo — {trialDaysLeft} {trialDaysLeft === 1 ? "dia restante" : "dias restantes"}
+                Acesso de teste ativo: {trialDaysLeft} {trialDaysLeft === 1 ? "dia restante" : "dias restantes"}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Expira em {new Date(redemption!.expires_at).toLocaleDateString("pt-BR")}. Assine para não perder o acesso.
@@ -194,7 +211,7 @@ export function PainelContent({ user, modules, redemption }: Props) {
           <div className="mb-8 p-4 rounded-xl border border-red-500/20 bg-red-500/5 flex items-center justify-between gap-4 flex-wrap">
             <div>
               <p className="text-sm font-semibold text-foreground">Período de teste encerrado</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Assine para continuar usando BY.BLOCOS e BY.GEOTECH.</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Assine para continuar usando os módulos do BY.FUST.</p>
             </div>
             <Link
               href="/#planos"
@@ -248,18 +265,25 @@ export function PainelContent({ user, modules, redemption }: Props) {
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-black tracking-tight text-card-foreground">{mod.name}</h3>
-                  {isPro ? (
-                    <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      PRO
-                    </span>
-                  ) : isAvailable ? (
-                    <span className="text-[11px] font-semibold text-muted-foreground bg-white/[0.04] px-2 py-0.5 rounded">
-                      FREE
-                    </span>
-                  ) : (
-                    <span className="text-[11px] font-semibold text-white/30">Em breve</span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {mod.beta && isAvailable && (
+                      <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
+                        BETA
+                      </span>
+                    )}
+                    {isPro ? (
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        PRO
+                      </span>
+                    ) : isAvailable ? (
+                      <span className="text-[11px] font-semibold text-muted-foreground bg-white/[0.04] px-2 py-0.5 rounded">
+                        FREE
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-white/30">Em breve</span>
+                    )}
+                  </div>
                 </div>
 
                 <p className="text-sm text-muted-foreground mb-5">{mod.description}</p>
@@ -283,7 +307,7 @@ export function PainelContent({ user, modules, redemption }: Props) {
                     <span className="text-sm text-muted-foreground/40">Disponível em breve</span>
                   )}
 
-                  {isAvailable && !isPro && (
+                  {isAvailable && !isPro && !mod.beta && (
                     <span className="text-[13px] text-primary font-medium">
                       {/* TODO: link para payment quando preços definidos */}
                       Upgrade disponível

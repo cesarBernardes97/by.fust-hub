@@ -145,7 +145,7 @@ export function PilarContent() {
           <p className="pl-hero-desc pl-rv pl-rv-d1">
             Dimensionamento de pilares de concreto armado conforme NBR 6118:2023.
             Flexao composta obliqua resolvida por fibras, efeitos de 2a ordem automaticos,
-            detalhamento completo — do esforco a armadura.
+            detalhamento completo: do esforco a armadura.
           </p>
           <div className="pl-hero-ctas pl-rv pl-rv-d2">
             <Link href="/cadastro" className="pl-btn pl-btn-primary">Entrar na lista de espera &rarr;</Link>
@@ -179,7 +179,7 @@ export function PilarContent() {
               <div className="pl-method-card pl-rv pl-rv-d1">
                 <div className="pl-method-card-icon">1/r</div>
                 <div className="pl-method-card-name">Curvatura aproximada</div>
-                <div className="pl-method-card-desc">Metodo da curvatura aproximada (1/r). Calculado em paralelo com o metodo &kappa; — o motor adota o mais favoravel.</div>
+                <div className="pl-method-card-desc">Metodo da curvatura aproximada (1/r). Calculado em paralelo com o metodo &kappa;: o motor adota o mais favoravel.</div>
                 <div className="pl-method-card-tag">&lambda; &le; 90</div>
               </div>
               <div className="pl-method-card pl-rv pl-rv-d2">
@@ -204,7 +204,7 @@ export function PilarContent() {
                 <div className="pl-diff-num">01</div>
                 <div>
                   <div className="pl-diff-title">Calculo real por fibras</div>
-                  <div className="pl-diff-desc">A secao e dividida em 900 pontos. O equilibrio N–Mx–My e resolvido ponto a ponto — sem formulas simplificadas, sem secao equivalente. Flexao obliqua tratada com precisao em qualquer geometria.</div>
+                  <div className="pl-diff-desc">A secao e dividida em 900 pontos. O equilibrio N-Mx-My e resolvido ponto a ponto, sem formulas simplificadas, sem secao equivalente. Flexao obliqua tratada com precisao em qualquer geometria.</div>
                   <div className="pl-diff-highlight">900 fibras &middot; Qualquer secao &middot; Obliqua real</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export function PilarContent() {
                 <div className="pl-diff-num">02</div>
                 <div>
                   <div className="pl-diff-title">2a ordem pelos dois metodos da norma</div>
-                  <div className="pl-diff-desc">Curvatura aproximada e rigidez &kappa; calculados simultaneamente. O motor escolhe o resultado mais favoravel — sem voce precisar escolher o metodo manualmente.</div>
+                  <div className="pl-diff-desc">Curvatura aproximada e rigidez &kappa; calculados simultaneamente. O motor escolhe o resultado mais favoravel, sem voce precisar escolher o metodo manualmente.</div>
                   <div className="pl-diff-highlight">Curvatura + Rigidez &kappa; &middot; Selecao automatica</div>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export function PilarContent() {
                 <div className="pl-diff-num">05</div>
                 <div>
                   <div className="pl-diff-title">Detalhamento completo gerado automaticamente</div>
-                  <div className="pl-diff-desc">Armadura longitudinal, estribos (diametro, espacamento, ramos, ganchos) e emenda por traspasse — tudo calculado e detalhado conforme NBR 6118:2023, sem etapa extra.</div>
+                  <div className="pl-diff-desc">Armadura longitudinal, estribos (diametro, espacamento, ramos, ganchos) e emenda por traspasse: tudo calculado e detalhado conforme NBR 6118:2023, sem etapa extra.</div>
                   <div className="pl-diff-highlight">Longitudinal + Estribos + Emenda &middot; PDF</div>
                 </div>
               </div>

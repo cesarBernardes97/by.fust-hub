@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Animated STM 3D wireframe visualization — inspired by BY.BLOCOS real viewer.
+ * Animated STM 3D wireframe visualization: inspired by BY.BLOCOS real viewer.
  * Shows a block on 4 piles (2x2) with:
  *  - Block wireframe in subtle white
  *  - Strut paths (bielas) in cyan-blue, drawn on
@@ -73,7 +73,7 @@ export function StressDiagram() {
         <line x1="360" y1="260" x2="360" y2="320" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" className="stm-block-edge" />
         <line x1="210" y1="310" x2="210" y2="370" stroke="rgba(255,255,255,0.06)" strokeWidth="0.8" className="stm-block-edge" />
 
-        {/* ── Piles (estacas) — 4 vertical lines below block ─ */}
+        {/* ── Piles (estacas): 4 vertical lines below block ─ */}
         {/* Front-left */}
         <line x1="120" y1="340" x2="120" y2="430" stroke="rgba(255,255,255,0.06)" strokeWidth="3" className="stm-pile" />
         <line x1="120" y1="340" x2="120" y2="430" stroke="rgba(255,255,255,0.12)" strokeWidth="1" className="stm-pile" />
@@ -119,7 +119,7 @@ export function StressDiagram() {
           Nd
         </text>
 
-        {/* ── Strut paths (bielas) — cyan/blue compression ── */}
+        {/* ── Strut paths (bielas): cyan/blue compression ── */}
         {/* From pillar base to 4 pile heads */}
         {/* Front-left */}
         <line x1="200" y1="215" x2="120" y2="340"
@@ -146,7 +146,7 @@ export function StressDiagram() {
           strokeDasharray="80" strokeDashoffset="80"
         />
 
-        {/* ── Ties (tirantes) — orange/red tension ─────── */}
+        {/* ── Ties (tirantes): orange/red tension ─────── */}
         {/* Front tie */}
         <line x1="120" y1="340" x2="300" y2="340"
           className="stm-tie stm-t1"
@@ -172,7 +172,7 @@ export function StressDiagram() {
           strokeDasharray="4 3"
         />
 
-        {/* ── Nodes — stress concentration points ────── */}
+        {/* ── Nodes: stress concentration points ────── */}
         {/* CCC node at pillar base */}
         <circle cx="210" cy="215" r="4" className="stm-node stm-n-ccc" fill="#FF8A1F" filter="url(#g-orange)" />
         {/* CCT nodes at pile heads */}

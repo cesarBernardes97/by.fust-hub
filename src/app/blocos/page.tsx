@@ -5,7 +5,7 @@ import { HeroVisualLazy } from "@/components/hero-visual-lazy";
 const APP_URL = process.env.NEXT_PUBLIC_BLOCOS_URL || "https://blocos.byfust.com.br";
 
 export const metadata: Metadata = {
-  title: "BY.BLOCOS — Dimensionamento de Blocos de Coroamento | BY.FUST",
+  title: "BY.BLOCOS: Dimensionamento de Blocos de Coroamento | BY.FUST",
   description:
     "Dimensione blocos de coroamento sobre estacas com modelo de bielas e tirantes 3D. 13 tipologias de 1 a 9 estacas, múltiplos pilares, estacas inclinadas, NBR 6118:2023, relatório PDF e visualização 3D interativa.",
   keywords: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "cálculo estrutural blocos",
   ],
   openGraph: {
-    title: "BY.BLOCOS — Dimensionamento de Blocos de Coroamento",
+    title: "BY.BLOCOS: Dimensionamento de Blocos de Coroamento",
     description:
       "13 tipologias de blocos sobre estacas com STM 3D, verificação de nós CCC/CCT/CTT e relatório PDF automático.",
     url: "https://byfust.com.br/blocos",
@@ -43,7 +43,7 @@ const blockTypes = [
   { piles: "9 estacas", shape: "Retangular 3×3 / Octagonal+1", desc: "Grade completa ou octágono regular + 1 central" },
   { piles: "5 estacas", shape: "Pentagonal", desc: "Pentágono regular, 5 vértices" },
   { piles: "6 estacas", shape: "Pentagonal+1", desc: "Pentágono regular + 1 central" },
-  { piles: "2–20 estacas", shape: "Livre", desc: "Geometria personalizada, posicionamento livre" },
+  { piles: "2 a 20 estacas", shape: "Livre", desc: "Geometria personalizada, posicionamento livre" },
 ];
 
 const capabilities = [
@@ -98,7 +98,7 @@ export default function BlocosPage() {
       </header>
 
       <main className="pt-28 pb-20">
-        {/* Hero — two columns: text + animation */}
+        {/* Hero: two columns: text + animation */}
         <section className="max-w-7xl mx-auto px-6 mb-20">
           <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
@@ -106,7 +106,7 @@ export default function BlocosPage() {
           </Link>
 
           <div className="relative min-h-[500px] flex items-center">
-            {/* Background animation — behind text, like main page */}
+            {/* Background animation: behind text, like main page */}
             <div className="blocos-hero-visual">
               <style>{`
                 .blocos-hero-visual .hero-visual-container {
@@ -126,7 +126,7 @@ export default function BlocosPage() {
               <HeroVisualLazy />
             </div>
 
-            {/* Text — on top */}
+            {/* Text: on top */}
             <div className="relative z-10 max-w-xl">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-1.5 w-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-500" />
@@ -156,7 +156,7 @@ export default function BlocosPage() {
         {/* Tipos de bloco */}
         <section className="max-w-7xl mx-auto px-6 mb-20">
           <h2 className="text-2xl font-black tracking-tight mb-2">17 tipologias de bloco</h2>
-          <p className="text-muted-foreground text-sm mb-8">De 1 a 20 estacas — retangulares, triangulares, trapezoidais, pentagonais, hexagonais, octagonais e geometria livre.</p>
+          <p className="text-muted-foreground text-sm mb-8">De 1 a 20 estacas: retangulares, triangulares, trapezoidais, pentagonais, hexagonais, octagonais e geometria livre.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {blockTypes.map((bt) => (
@@ -223,7 +223,7 @@ export default function BlocosPage() {
           <Link href="/" className="text-sm font-black tracking-tighter text-foreground">
             BY<span className="text-primary">.</span>FUST
           </Link>
-          <p className="text-[11px] text-muted-foreground/60">&copy; 2024–2026 BY.FUST</p>
+          <p className="text-[11px] text-muted-foreground/60">&copy; 2024 a 2026 BY.FUST</p>
         </div>
       </footer>
     </>

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "byfust-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "--port", "3080"],
       "port": 3080
     }
   ]
